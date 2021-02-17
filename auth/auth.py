@@ -136,14 +136,26 @@ def verify_decode_jwt(token):
         'description': 'Unable to find the appropriate key!'
     }, 400)
 
-#Authenticate JWT and its RBAC permission
-def requires_auth(permission=''):
+
+"""RBAC splitter"""
+
+
+# Authenticate JWT (WITHOUT RBAC permission)
+def requires_auth(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        token = session[constants.ACCESS_TOKEN]
+        payload = verify_decode_jwt(token)
+
+        return f(payload, *args, **kwargs)
+    return wrapper
+
+
+#Authenticate JWT WITH RBAC permission
+def requires_auth_rbac(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            # if os.environ['PROFILE_KEY'] not in session:
-            #     return redirect('/login')
-            #Verify JWT and check permission
             token = session[constants.ACCESS_TOKEN]
             payload = verify_decode_jwt(token)
 

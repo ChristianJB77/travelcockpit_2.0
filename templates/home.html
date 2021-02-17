@@ -1,23 +1,37 @@
-<html>
-    <head>
+{% extends "layout.html" %}
 
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% block title %}
+   Home
+{% endblock %}
 
-        <!-- font awesome from BootstrapCDN -->
-        <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-        <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+{% block main %}
+    <!-- Error message -->
+    <script type="text/javascript">
+        if ({{ number }} == 1) {
+            alert('{{message}}');
+        }
+    </script>
 
-        <link href="/static/app.css" rel="stylesheet">
-    </head>
-    <body class="home">
-        <div class="container">
-            <div class="login-page clearfix">
-              <div class="login-box auth0-box before">
-                <img src="https://i.cloudup.com/StzWWrY34s.png" />
-                <h3>Test full stack</h3>
-                <a id="qsLoginBtn" class="btn btn-primary btn-lg btn-login btn-block" href="/login">Log In</a>
-              </div>
+    <!--Travel links for user submitted travel destination COUNTRY-->
+    <h2 class='h2'>Your Destination | Dein Reiseziel?</h2>
+    <form action="/" method="post">
+        <div class="form-row align-items-center center_div">
+            <div class="col-sm-8 my-1">
+                <input autocomplete="off" autofocus class="form-control"
+                name="destination" placeholder="Country(DE/EN) or City(EN)" type="text">
+            </div>
+            <div class="col-auto my-1">
+                <button class="btn btn-primary" type="submit">GO</button>
             </div>
         </div>
-    </body>
-</html>
+    </form>
+    <br><br><br><br>
+    <!-- Travel location idea for warm weather this month -->
+    <h2 class='h2'>Jetzt ins Warme?</h2>
+    <a class="form-row center_div align-items-center"
+        href="{{ go_warm }}" target="_blank">
+        <img class="index_img" src="static/warm_weather.jpg" alt="warm_weather"
+            loading="lazy">
+    </a>
+
+{% endblock %}
