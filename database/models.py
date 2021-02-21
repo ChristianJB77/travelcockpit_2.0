@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, create_engine, String, Integer, DateTime
 from flask_sqlalchemy import SQLAlchemy
 import json
 import os
@@ -20,7 +20,7 @@ def setup_db(app, database_path=database_path):
     db.create_all()
 
 
-"""Classes"""
+"""APP"""
 
 
 class Month(db.Model):
@@ -32,6 +32,34 @@ class Month(db.Model):
     # Debugging printout formatting
     def __repr__(self):
         return f'<Month {self.id} {self.name_de}>'
+
+
+"""USERDATA"""
+
+
+class User(db.Model):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(), nullable=False)
+    name = db.Column(db.String())
+    location_iso2 = db.Column(db.String())
+    user_history = db.relationship('UserHistory', backref='user', lazy=True)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<User {self.id} {self.email}>'
+
+class UserHistory(db.Model):
+    __tablename__ = "user_history"
+    id = db.Column(db.Integer, primary_key=True)
+    destination = db.Column(db.String(), nullable=False)
+    timestamp = db.Column(db.DateTime(), nullable=False)
+    # Foreign key
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<UserHistory {self.id} {self.destination}>'
+
+"""TODOS"""
 
 
 #Parent table for todos list
@@ -51,7 +79,8 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
-    todos_list_id = db.Column(db.Integer, db.ForeignKey('todos_list.id'), nullable=False)
+    todos_list_id = db.Column(db.Integer, db.ForeignKey('todos_list.id'),
+                    nullable=False)
     #Debugging printout formatting
     def __repr__(self):
         return f'<Todo {self.id} {self.decription}>'

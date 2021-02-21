@@ -11,7 +11,8 @@ import datetime
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
 # Database model
-from database.models import setup_db, db, Todo_List, Todo, Month
+from database.models import setup_db, db, Todo_List, Todo, Month, User, \
+                            UserHistory
 # Auth0 authentication
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
@@ -41,7 +42,6 @@ def create_app(test_config=None):
         current_month = datetime.datetime.now().month
         month_de = Month.query.filter(Month.number == current_month).one()
         month_de_str = month_de.name_de
-        print(month_de.name_de)
         go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
         return render_template("index.html", go_warm=go_warm)
 
@@ -69,9 +69,27 @@ def create_app(test_config=None):
             'name': userinfo['name'],
             'picture': userinfo['picture']
         }
-
+        # Store user email in session
         session[constants.USER_ID] = userinfo["email"]
-        print('### user_id ', session['user_id'])
+
+        ### If user is new, add to users table
+        res = User.query.filter(User.email == session['user_id']).one_or_none()
+        # Location information not available for manual account
+        try:
+            loc = userinfo['locale']
+        except:
+            loc = None
+
+        if res == None:
+            try:
+                user = User(email=session['user_id'], name=userinfo['name'],
+                            location_iso2=loc)
+                db.session.add(user)
+                db.session.commit()
+            except:
+                db.session.rollback()
+            finally:
+                db.session.close()
 
         return redirect('/home')
 
@@ -100,9 +118,12 @@ def create_app(test_config=None):
             current_month = datetime.datetime.now().month
             month_de = Month.query.filter(Month.number == current_month).one()
             month_de_str = month_de.name_de
-            print(month_de.name_de)
             go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
             return render_template("home.html", go_warm=go_warm)
+
+        # POST
+        #else:
+
 
         return render_template('home.html')
 
