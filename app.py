@@ -37,7 +37,13 @@ def create_app(test_config=None):
     # Start side to guide user to login/register
     @app.route('/')
     def index():
-        return render_template('index.html')
+        #Get current month for go warm on
+        current_month = datetime.datetime.now().month
+        month_de = Month.query.filter(Month.number == current_month).one()
+        month_de_str = month_de.name_de
+        print(month_de.name_de)
+        go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
+        return render_template("index.html", go_warm=go_warm)
 
 
     @app.route('/login')
@@ -84,19 +90,19 @@ def create_app(test_config=None):
     @app.route('/home', methods=['GET', 'POST'])
     @requires_auth
     def home(jwt):
+        # Get user permission, empty if user not actively got permissions
         session[constants.PERMISSION] = jwt['permissions']
         # Check if user with or without RBAC
         print("#### permission @home ", jwt["permissions"])
 
-        # if request.method == "GET":
-        #     #Get current month for go warm on
-        #     current_month = datetime.datetime.now().month
-        #     month_de =
-        #
-        #     month_de = db.execute("SELECT name_de FROM months \
-        #           WHERE number=:current", current=current_month)[0]['name_de']
-        #     go_warm = "https://www.reise-klima.de/urlaub/" + month_de
-        #     return render_template("index.html", go_warm=go_warm)
+        if request.method == "GET":
+            #Get current month for go warm on
+            current_month = datetime.datetime.now().month
+            month_de = Month.query.filter(Month.number == current_month).one()
+            month_de_str = month_de.name_de
+            print(month_de.name_de)
+            go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
+            return render_template("home.html", go_warm=go_warm)
 
         return render_template('home.html')
 
