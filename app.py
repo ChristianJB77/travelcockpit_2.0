@@ -11,8 +11,7 @@ import datetime
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
 # Database model
-from database.models import setup_db, db_drop_and_create_all, db, \
-                            Todo_List, Todo, Month
+from database.models import setup_db, db, Todo_List, Todo, Month
 # Auth0 authentication
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
