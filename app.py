@@ -6,22 +6,22 @@ from flask import Flask, render_template, request, redirect, jsonify, \
 from flask_cors import CORS
 from six.moves.urllib.parse import urlencode
 import sys
+import datetime
 
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
 # Database model
-from database.models import setup_db, db_drop_and_create_all, Todo_List, Todo, \
-                            db
+from database.models import setup_db, db_drop_and_create_all, db, \
+                            Todo_List, Todo, Month
 # Auth0 authentication
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
 
 def create_app(test_config=None):
-
+    # Init app functions
     app = Flask(__name__)
     app.debug = True
     app.secret_key = os.environ['SECRET_KEY']
-
     setup_db(app)
     CORS(app)
     #Auth0 initalizing from auth.py
@@ -30,12 +30,6 @@ def create_app(test_config=None):
     AUTH0_CALLBACK_URL = auth_dict["url"]
     AUTH0_AUDIENCE = auth_dict["audi"]
     AUTH0_CLIENT_ID = auth_dict['id']
-
-
-    """Uncomment for re-initalizing database, watch out: Will delete entire db"""
-
-
-    # db_drop_and_create_all()
 
 
     """Auth0 login / logout"""
@@ -71,6 +65,9 @@ def create_app(test_config=None):
             'picture': userinfo['picture']
         }
 
+        session[constants.USER_ID] = userinfo["email"]
+        print('### user_id ', session['user_id'])
+
         return redirect('/home')
 
 
@@ -85,9 +82,32 @@ def create_app(test_config=None):
     """APP"""
 
 
-    @app.route('/home')
-    def home():
+    @app.route('/home', methods=['GET', 'POST'])
+    @requires_auth
+    def home(jwt):
+        session[constants.PERMISSION] = jwt['permissions']
+        # Check if user with or without RBAC
+        print("#### permission @home ", jwt["permissions"])
+
+        # if request.method == "GET":
+        #     #Get current month for go warm on
+        #     current_month = datetime.datetime.now().month
+        #     month_de =
+        #
+        #     month_de = db.execute("SELECT name_de FROM months \
+        #           WHERE number=:current", current=current_month)[0]['name_de']
+        #     go_warm = "https://www.reise-klima.de/urlaub/" + month_de
+        #     return render_template("index.html", go_warm=go_warm)
+
         return render_template('home.html')
+
+    @app.route("/vision")
+    def vision():
+        return render_template("vision.html")
+
+    @app.route("/contact")
+    def contact():
+        return render_template("contact.html")
 
 
     """TODOS"""
@@ -242,7 +262,7 @@ def create_app(test_config=None):
         todos = Todo.query.filter_by(todos_list_id=todos_list_id).order_by('id').all()
         # Get Auth0 userinfo
         userinfo=session[os.environ['PROFILE_KEY']]
-        userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD])
+        userinfo_pretty = json.dumps(session[constants.JWT_PAYLOAD])
 
         return render_template("dashboard.html", lists=todo_lists,
                                 active_todo_list=active_todo_list, data=todos,

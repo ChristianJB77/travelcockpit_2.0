@@ -24,8 +24,20 @@ def db_drop_and_create_all():
     db.create_all()
 
 
+"""Classes"""
 
-"""Create table with classes"""
+
+class Month(db.Model):
+    __tablename__ = "months"
+    id = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.Integer, nullable=False)
+    name_de = db.Column(db.String(), nullable=False)
+    name_en = db.Column(db.String(), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<Month {self.id} {self.name_de}>'
+
+
 #Parent table for todos list
 class Todo_List(db.Model):
     __tablename__ = "todos_list"
