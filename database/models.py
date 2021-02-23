@@ -33,6 +33,46 @@ class Month(db.Model):
     def __repr__(self):
         return f'<Month {self.id} {self.name_de}>'
 
+class DataHubCountries(db.Model):
+    __tablename__ = "data_hub_countries"
+    id = db.Column(db.Integer, primary_key=True)
+    country_name = db.Column(db.String())
+    official_name_english = db.Column(db.String())
+    iso3166_1_alpha_2 = db.Column(db.String())
+    iso316_1_alpha_3 = db.Column(db.String())
+    dial = db.Column(db.String())
+    iso4217_currency_aplhabetic_code = db.Column(db.String())
+    iso4217_currency_country_name = db.Column(db.String())
+    iso4217_currency_name = db.Column(db.String())
+    capital = db.Column(db.String())
+    continent = db.Column(db.String())
+    tld = db.Column(db.String())
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<DataHubCountries {self.id} {self.country_name}>'
+
+class CountriesTranslate(db.Model):
+    __tablename__ = "countries_translate"
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(), nullable=False)
+    en = db.Column(db.String(), nullable=False)
+    de = db.Column(db.String(), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<CountriesTranslate {self.id} {self.code}>'
+
+class Cities(db.Model):
+    __tablename__ = "ctities"
+    id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(), nullable=False)
+    city_ascii = db.Column(db.String(), nullable=False)
+    country = db.Column(db.String())
+    iso2 = db.Column(db.String(), nullable=False)
+    state = db.Column(db.String())
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<Cities {self.id} {self.city}>'
+
 
 """USERDATA"""
 

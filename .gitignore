@@ -6,6 +6,7 @@ venv
 .directory
 .idea
 mypython/
+database/travel_cockpit.db
 
 # OS generated files #
 ######################

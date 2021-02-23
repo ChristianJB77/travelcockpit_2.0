@@ -16,6 +16,9 @@ from database.models import setup_db, db, Todo_List, Todo, Month, User, \
 # Auth0 authentication
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
+# My features
+from features.input_classifier import check, loc_class
+
 
 def create_app(test_config=None):
     # Init app functions
@@ -70,10 +73,11 @@ def create_app(test_config=None):
             'picture': userinfo['picture']
         }
         # Store user email in session
-        session[constants.USER_ID] = userinfo["email"]
+        session[constants.USER_EMAIL] = userinfo["email"]
+        email = session['user_email']
 
         ### If user is new, add to users table
-        res = User.query.filter(User.email == session['user_id']).one_or_none()
+        res = User.query.filter(User.email == email).one_or_none()
         # Location information not available for manual account
         try:
             loc = userinfo['locale']
@@ -82,7 +86,7 @@ def create_app(test_config=None):
 
         if res == None:
             try:
-                user = User(email=session['user_id'], name=userinfo['name'],
+                user = User(email=session['user_email'], name=userinfo['name'],
                             location_iso2=loc)
                 db.session.add(user)
                 db.session.commit()
@@ -90,6 +94,10 @@ def create_app(test_config=None):
                 db.session.rollback()
             finally:
                 db.session.close()
+
+        res = User.query.filter(User.email == email).one()
+        user_id = res.id
+        session[constants.USER_ID] = user_id
 
         return redirect('/home')
 
@@ -122,7 +130,28 @@ def create_app(test_config=None):
             return render_template("home.html", go_warm=go_warm)
 
         # POST
-        #else:
+        else:
+            # Get current user_id
+            user_id = session['user_id']
+            #User input check, must be text
+            #Formatting and classification with check function
+            destination = request.form.get("destination")
+            dest = check(destination)
+            print('#### DEST: ', dest)
+            if not dest:
+                return render_template("home.html", number=1,
+                                    message="Please provide TRAVEL DESTINATION")
+
+            #Get language switch value (English or German)
+            switch = request.form.get("language")
+            #Get location classes dictionary
+            loc_classes = loc_class(dest)
+            print('#### loc_classes: ', loc_classes)
+            #Post default language to dropdwon on my dashboard
+            # if loc_classes['language'] == 'german':
+            #     options = ["German", "English"]
+            # else:
+            #     options = ["English", "German"]
 
 
         return render_template('home.html')
