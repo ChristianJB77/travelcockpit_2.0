@@ -5,8 +5,7 @@ from flask import redirect, render_template, request, session
 from functools import wraps
 from sqlalchemy import or_, func
 # Database
-from database.models import db, DataHubCountries, CountriesTranslate, \
-                            Cities
+from database.models import db, DataHubCountries, CountriesTranslate, Cities
 
 
 def check(destination):
@@ -147,36 +146,40 @@ def loc_class(dest):
     ### City check
     # Big city check
 
-    # elif db.execute("SELECT * FROM geodata WHERE (LOWER(city)=:dest \
-    #                 OR LOWER(city_ascii)=:dest)", dest=dest):
-    #     #Location type for link functions
-    #     dest_dic['loc_type'] = "big_city"
-    #     #Get city name
-    #     city = db.execute("SELECT city_ascii FROM geodata \
-    #                 WHERE (LOWER(city)=:dest OR \
-    #                 LOWER(city_ascii)=:dest)", dest=dest)[0]['city_ascii'].lower()
-    #     dest_dic['city'] = city
-    #     #Get ISO alpha2 code
-    #     country_iso = db.execute("SELECT iso2 FROM geodata WHERE \
-    #                     LOWER(city_ascii)=:dest", dest=city)[0]['iso2'].lower()
-    #     dest_dic['country_iso']  = country_iso
-    #     #Get country of city in English and German
-    #     dest_dic['country_de'] = db.execute("SELECT de FROM countries_translate WHERE \
-    #                 LOWER(code)=:iso", iso=country_iso)[0]['de'].lower()
-    #     dest_dic['country_en'] = db.execute("SELECT en FROM countries_translate WHERE \
-    #                 LOWER(code)=:iso", iso=country_iso)[0]['en'].lower()
-    #
-    #     dest_dic['language'] = "unclear"
-    #     #Print out for html title
-    #     dest_dic['print'] = dest_dic['city'].title()
-    #     return dest_dic
-    #
-    #
-    # ###Good luck, country and city unknown
-    # else:
-    #     dest_dic['loc_type'] = "good_luck"
-    #     dest_dic['location'] = dest
-    #     dest_dic['language'] = "unclear"
-    #     #Print out for html title
-    #     dest_dic['print'] = "Good Luck Mode for: " + dest_dic['location'].title()
-    #     return dest_dic
+    elif Cities.query.filter(or_( func.lower(Cities.city) == dest), \
+                (func.lower(Cities.city_ascii) == dest)).one_or_none() != None:
+
+        #Location type for link functions
+        dest_dic['loc_type'] = "big_city"
+        #Get city name
+        city = Cities.query.filter(or_( func.lower(Cities.city) == dest), \
+                    (func.lower(Cities.city_ascii) == dest)).one_or_none() \
+                    .city_ascii.lower()
+        dest_dic['city'] = city
+        #Get ISO alpha2 code
+        country_iso = Cities.query \
+                    .filter(func.lower(Cities.city_ascii) == city) \
+                    .one_or_none().iso2.lower()
+        dest_dic['country_iso']  = country_iso
+        #Translate to English and German
+        dest_dic['country_de'] = CountriesTranslate.query \
+                            .filter(func.lower(CountriesTranslate.code) \
+                            == country_iso).one_or_none().de.lower()
+        dest_dic['country_en'] = CountriesTranslate.query \
+                            .filter(func.lower(CountriesTranslate.code) \
+                            == country_iso).one_or_none().en.lower()
+
+        dest_dic['language'] = "unclear"
+        #Print out for html title
+        dest_dic['print'] = dest_dic['city'].title()
+        return dest_dic
+
+
+    ###Good luck, country and city unknown
+    else:
+        dest_dic['loc_type'] = "good_luck"
+        dest_dic['location'] = dest
+        dest_dic['language'] = "unclear"
+        #Print out for html title
+        dest_dic['print'] = "Good Luck Mode for: " + dest_dic['location'].title()
+        return dest_dic
