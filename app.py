@@ -19,6 +19,7 @@ from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 # My features
 from features.input_classifier import check, loc_class
 from features.link_maker import links
+from features.weather_widget_maker import weather_widget
 
 def create_app(test_config=None):
     # Init app functions
@@ -147,6 +148,7 @@ def create_app(test_config=None):
             #Get location classified dictionary
             loc_classes = loc_class(dest)
             print('#### loc_classes: ', loc_classes)
+
             # Post default language to dropdwon on my dashboard
             if loc_classes['language'] == 'german':
                 options = ["German", "English"]
@@ -157,12 +159,15 @@ def create_app(test_config=None):
             links_dic = links(dest, loc_classes, switch)
             print('#### links_dic ', links_dic)
 
+            weather = weather_widget(loc_classes, switch)
+            print('#### weather_widget ', weather)
+
             info = {}
 
 
         return render_template('my_dashboard.html', switch=switch,
                                 loc_classes=loc_classes, links_dic=links_dic,
-                                info=info, options=options)
+                                info=info, options=options, weather=weather)
 
     @app.route("/vision")
     def vision():
