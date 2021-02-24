@@ -18,7 +18,7 @@ from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
 # My features
 from features.input_classifier import check, loc_class
-
+from features.link_maker import links
 
 def create_app(test_config=None):
     # Init app functions
@@ -144,17 +144,25 @@ def create_app(test_config=None):
 
             #Get language switch value (English or German)
             switch = request.form.get("language")
-            #Get location classes dictionary
+            #Get location classified dictionary
             loc_classes = loc_class(dest)
             print('#### loc_classes: ', loc_classes)
-            #Post default language to dropdwon on my dashboard
-            # if loc_classes['language'] == 'german':
-            #     options = ["German", "English"]
-            # else:
-            #     options = ["English", "German"]
+            # Post default language to dropdwon on my dashboard
+            if loc_classes['language'] == 'german':
+                options = ["German", "English"]
+            else:
+                options = ["English", "German"]
+
+            #Get button links dictionary
+            links_dic = links(dest, loc_classes, switch)
+            print('#### links_dic ', links_dic)
+
+            info = {}
 
 
-        return render_template('home.html')
+        return render_template('my_dashboard.html', switch=switch,
+                                loc_classes=loc_classes, links_dic=links_dic,
+                                info=info, options=options)
 
     @app.route("/vision")
     def vision():

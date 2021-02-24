@@ -74,6 +74,15 @@ class Cities(db.Model):
         return f'<Cities {self.id} {self.city}>'
 
 
+class ReiseKlima(db.Model):
+    __tablename__ = "reise_klima"
+    id = db.Column(db.Integer, primary_key=True)
+    destination = db.Column(db.String(), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<ReiseKlima {self.id} {self.destination}>'
+
+
 """USERDATA"""
 
 

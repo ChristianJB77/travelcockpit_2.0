@@ -48,7 +48,7 @@ def loc_class(dest):
                 func.lower(DataHubCountries.iso4217_currency_country_name) \
                     == dest)).one_or_none().iso3166_1_alpha_2.lower()
 
-        dest_dic['countr_iso'] = country_iso
+        dest_dic['country_iso'] = country_iso
         # Translate to German and English
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
