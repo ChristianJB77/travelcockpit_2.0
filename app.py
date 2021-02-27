@@ -134,7 +134,7 @@ def create_app(test_config=None):
         # POST
         else:
             # Get current user_id
-            user_id = session['user_id']
+            id = session['user_id']
             #User input check, must be text
             #Formatting and classification with check function
             destination = request.form.get("destination")
@@ -175,6 +175,19 @@ def create_app(test_config=None):
                 history = loc_classes["city"]
             else:
                 history = loc_classes["location"]
+
+            # Store user search in user_history
+            try:
+                user_history = UserHistory(
+                                destination=history,
+                                timestamp=time,
+                                user_id=id)
+                db.session.add(user_history)
+                db.session.commit()
+            except:
+                db.session.rollback()
+            finally:
+                db.session.close()
 
 
         return render_template('my_dashboard.html', switch=switch,
