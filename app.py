@@ -20,6 +20,7 @@ from features.input_classifier import check, loc_class
 from features.link_maker import links
 from features.weather_widget_maker import weather_widget
 from features.covid_widget_maker import covid_widget
+from features.info_widget_maker import info_widget
 
 def create_app(test_config=None):
     # Init app functions
@@ -157,15 +158,23 @@ def create_app(test_config=None):
 
             # Button links dictionary
             links_dic = links(dest, loc_classes, switch)
-
             # Weather widget
             weather = weather_widget(loc_classes, switch)
-
             # Covid19 widget
             covid = covid_widget(loc_classes, switch)
-
             # Info box widget
-            info = {}
+            info = info_widget(loc_classes, switch, weather)
+            # Current time
+            time = datetime.datetime.now()
+
+            # Destination for search history
+            loc = loc_classes["loc_type"]
+            if loc == "country":
+                history = loc_classes["country_en"]
+            elif loc == "big_city":
+                history = loc_classes["city"]
+            else:
+                history = loc_classes["location"]
 
 
         return render_template('my_dashboard.html', switch=switch,

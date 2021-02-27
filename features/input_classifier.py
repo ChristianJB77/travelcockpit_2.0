@@ -35,7 +35,7 @@ def loc_class(dest):
                 func.lower(DataHubCountries.iso316_1_alpha_3) == dest, \
                 func.lower(DataHubCountries.official_name_english) == dest, \
                 func.lower(DataHubCountries.iso4217_currency_country_name) \
-                    == dest)).one_or_none() != None:
+                    == dest)).first() != None:
 
         # Location type for link functions
         dest_dic['loc_type'] = "country"
@@ -46,16 +46,16 @@ def loc_class(dest):
                 func.lower(DataHubCountries.iso316_1_alpha_3) == dest, \
                 func.lower(DataHubCountries.official_name_english) == dest, \
                 func.lower(DataHubCountries.iso4217_currency_country_name) \
-                    == dest)).one_or_none().iso3166_1_alpha_2.lower()
+                    == dest)).first().iso3166_1_alpha_2.lower()
 
         dest_dic['country_iso'] = country_iso
         # Translate to German and English
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().de.lower()
+                            == country_iso).first().de.lower()
         dest_dic['country_en'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().en.lower()
+                            == country_iso).first().en.lower()
 
         # Language tag
         dest_dic['language'] = "english"
@@ -67,23 +67,23 @@ def loc_class(dest):
     # Country check GERMAN
     elif CountriesTranslate.query \
             .filter(func.lower(CountriesTranslate.de) == dest) \
-            .one_or_none() != None:
+            .first() != None:
 
         # Location type for link functions
         dest_dic['loc_type'] = "country"
         # Get ISO alpha2 code
         country_iso = CountriesTranslate.query \
                         .filter(func.lower(CountriesTranslate.de) == dest) \
-                        .one_or_none().code.lower()
+                        .first().code.lower()
 
         dest_dic['country_iso'] = country_iso
         # Translate to German and English
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().de.lower()
+                            == country_iso).first().de.lower()
         dest_dic['country_en'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().en.lower()
+                            == country_iso).first().en.lower()
 
         dest_dic['language'] = "german"
         # Print out for html title
@@ -94,22 +94,22 @@ def loc_class(dest):
     # Replace space in German and try again
     elif CountriesTranslate.query \
             .filter(func.lower(CountriesTranslate.de) == dest_no_space) \
-            .one_or_none() != None:
+            .first() != None:
         dest = dest_no_space
         #Location type for link functions
         dest_dic['loc_type'] = "country"
         #Get ISO alpha2 code
         country_iso = CountriesTranslate.query \
                         .filter(func.lower(CountriesTranslate.de) == dest) \
-                        .one_or_none().code.lower()
+                        .first().code.lower()
         dest_dic['country_iso'] = country_iso
         #Translate to German and English
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().de.lower()
+                            == country_iso).first().de.lower()
         dest_dic['country_en'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().en.lower()
+                            == country_iso).first().en.lower()
 
         dest_dic['language'] = "german"
         #Print out for html title
@@ -120,22 +120,22 @@ def loc_class(dest):
     # All to upper case debugging for special character ä, ö, ü
     elif CountriesTranslate.query \
             .filter(func.upper(CountriesTranslate.de) == dest_up) \
-            .one_or_none() != None:
+            .first() != None:
         dest = dest_up
         #Location type for link functions
         dest_dic['loc_type'] = "country"
         #Get ISO alpha2 code
         country_iso = CountriesTranslate.query \
                         .filter(func.upper(CountriesTranslate.de) == dest) \
-                        .one_or_none().code.lower()
+                        .first().code.lower()
         dest_dic['country_iso'] = country_iso
         #Translate to English and German
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().de.lower()
+                            == country_iso).first().de.lower()
         dest_dic['country_en'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().en.lower()
+                            == country_iso).first().en.lower()
 
         dest_dic['language'] = "german"
         #Print out for html title
@@ -146,28 +146,28 @@ def loc_class(dest):
     ### City check
     # Big city check
 
-    elif Cities.query.filter(or_( func.lower(Cities.city) == dest), \
-                (func.lower(Cities.city_ascii) == dest)).one_or_none() != None:
+    elif Cities.query \
+            .filter(func.lower(Cities.city_ascii) == dest).first() != None:
 
         #Location type for link functions
         dest_dic['loc_type'] = "big_city"
         #Get city name
-        city = Cities.query.filter(or_( func.lower(Cities.city) == dest), \
-                    (func.lower(Cities.city_ascii) == dest)).one_or_none() \
-                    .city_ascii.lower()
+        city = Cities.query \
+                    .filter(func.lower(Cities.city_ascii) == dest) \
+                    .first().city_ascii.lower()
         dest_dic['city'] = city
         #Get ISO alpha2 code
         country_iso = Cities.query \
                     .filter(func.lower(Cities.city_ascii) == city) \
-                    .one_or_none().iso2.lower()
+                    .first().iso2.lower()
         dest_dic['country_iso']  = country_iso
         #Translate to English and German
         dest_dic['country_de'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().de.lower()
+                            == country_iso).first().de.lower()
         dest_dic['country_en'] = CountriesTranslate.query \
                             .filter(func.lower(CountriesTranslate.code) \
-                            == country_iso).one_or_none().en.lower()
+                            == country_iso).first().en.lower()
 
         dest_dic['language'] = "unclear"
         #Print out for html title

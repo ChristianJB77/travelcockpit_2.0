@@ -92,6 +92,18 @@ class CovidCountries(db.Model):
     def __repr__(self):
         return f'<CovidCountries {self.id} {self.country}>'
 
+class WorldBank(db.Model):
+    __tablename__ = "world_bank"
+    id = db.Column(db.Integer, primary_key=True)
+    CountryName = db.Column(db.String(), nullable=False)
+    CountryCode = db.Column(db.String(), nullable=False)
+    SeriesName = db.Column(db.String(), nullable=False)
+    SeriesCode = db.Column(db.String(), nullable=False)
+    year2019 = db.Column(db.String(), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<CovidCountries {self.id} {self.SeriesName}>'
+
 
 """USERDATA"""
 
