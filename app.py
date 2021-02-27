@@ -7,6 +7,7 @@ from flask_cors import CORS
 from six.moves.urllib.parse import urlencode
 import sys
 import datetime
+from sqlalchemy import func
 
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
@@ -116,6 +117,14 @@ def create_app(test_config=None):
     """APP"""
 
 
+    @app.route("/vision")
+    def vision():
+        return render_template("vision.html")
+
+    @app.route("/contact")
+    def contact():
+        return render_template("contact.html")
+
     @app.route('/home', methods=['GET', 'POST'])
     @requires_auth
     def home(jwt):
@@ -198,13 +207,23 @@ def create_app(test_config=None):
                                 info=info, options=options, weather=weather,
                                 covid=covid, holidays=holidays)
 
-    @app.route("/vision")
-    def vision():
-        return render_template("vision.html")
 
-    @app.route("/contact")
-    def contact():
-        return render_template("contact.html")
+
+    @app.route("/history")
+    @requires_auth
+    def history(jwt):
+        # Show user's search history
+        id = session["user_id"]
+
+        history = UserHistory.query.filter(UserHistory.user_id == id) \
+                    .with_entities(UserHistory.destination, \
+                    func.count(UserHistory.destination)) \
+                    .group_by(UserHistory.destination) \
+                    .order_by(func.count(UserHistory.destination).desc()).all()
+
+        print('#### history: ', history)
+
+        return render_template("history.html", rows=history)
 
 
     """TODOS"""
