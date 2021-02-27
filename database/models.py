@@ -123,7 +123,7 @@ class UserHistory(db.Model):
     __tablename__ = "user_history"
     id = db.Column(db.Integer, primary_key=True)
     destination = db.Column(db.String(), nullable=False)
-    timestamp = db.Column(db.DateTime(), nullable=Falsepython )
+    timestamp = db.Column(db.DateTime(), nullable=False)
     # Foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     # Debugging printout formatting
