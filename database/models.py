@@ -82,6 +82,16 @@ class ReiseKlima(db.Model):
     def __repr__(self):
         return f'<ReiseKlima {self.id} {self.destination}>'
 
+class CovidCountries(db.Model):
+    __tablename__ = "covid_countries"
+    id = db.Column(db.Integer, primary_key=True)
+    country = db.Column(db.String(), nullable=False)
+    slug = db.Column(db.String(), nullable=False)
+    iso2 = db.Column(db.String(), nullable=False)
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<CovidCountries {self.id} {self.country}>'
+
 
 """USERDATA"""
 

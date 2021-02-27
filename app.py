@@ -10,16 +10,16 @@ import datetime
 
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
+from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 # Database model
 from database.models import setup_db, db, Todo_List, Todo, Month, User, \
                             UserHistory
-# Auth0 authentication
-from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 
 # My features
 from features.input_classifier import check, loc_class
 from features.link_maker import links
 from features.weather_widget_maker import weather_widget
+from features.covid_widget_maker import covid_widget
 
 def create_app(test_config=None):
     # Init app functions
@@ -143,9 +143,9 @@ def create_app(test_config=None):
                 return render_template("home.html", number=1,
                                     message="Please provide TRAVEL DESTINATION")
 
-            #Get language switch value (English or German)
+            # Get language switch value (English or German)
             switch = request.form.get("language")
-            #Get location classified dictionary
+            # Get location classified dictionary
             loc_classes = loc_class(dest)
             print('#### loc_classes: ', loc_classes)
 
@@ -155,19 +155,23 @@ def create_app(test_config=None):
             else:
                 options = ["English", "German"]
 
-            #Get button links dictionary
+            # Button links dictionary
             links_dic = links(dest, loc_classes, switch)
-            print('#### links_dic ', links_dic)
 
+            # Weather widget
             weather = weather_widget(loc_classes, switch)
-            print('#### weather_widget ', weather)
 
+            # Covid19 widget
+            covid = covid_widget(loc_classes, switch)
+
+            # Info box widget
             info = {}
 
 
         return render_template('my_dashboard.html', switch=switch,
                                 loc_classes=loc_classes, links_dic=links_dic,
-                                info=info, options=options, weather=weather)
+                                info=info, options=options, weather=weather,
+                                covid=covid)
 
     @app.route("/vision")
     def vision():
