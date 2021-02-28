@@ -1,2 +1,10 @@
+<<<<<<< HEAD
 $cat runtime.txt
 python-3.7.10
+||||||| 96f162d
+$ cat runtime.txt
+python-3.9.0
+=======
+$ cat runtime.txt
+python-3.7.10
+>>>>>>> 724a9c8cc7f70fb57aa12e55444f328c24d3a5fd
