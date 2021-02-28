@@ -1,4 +1,10 @@
-DATABASE_URL = postgres://cjjckvkrrjxrbw:81ace218d4ef65346bf24a5c2366be7e8d3684662e2a5466f4288a6d9095b38d@ec2-54-155-208-5.eu-west-1.compute.amazonaws.com:5432/d3hfq5mc62qb27
-PROFILE_KEY = Syw8888!!!
-SECRET_KEY = Husb745+=&
-MAPS_KEY = AIzaSyBxDSAZmHZeS8rJXJ1e4_G3VO-BQD4Okn0&q=
+export DATABASE_URL='postgres://cjjckvkrrjxrbw:81ace218d4ef65346bf24a5c2366be7e8d3684662e2a5466f4288a6d9095b38d@ec2-54-155-208-5.eu-west-1.compute.amazonaws.com:5432/d3hfq5mc62qb27'
+export PROFILE_KEY='Syw8888!!!'
+export SECRET_KEY='Husb745+=&'
+export MAPS_KEY='AIzaSyBxDSAZmHZeS8rJXJ1e4_G3VO-BQD4Okn0&q='
+export AUTH0_CLIENT_ID='RdKJpgu3BPyP2hgQx2AIu1KGka6OfBkI'
+export AUTH0_DOMAIN='travelcockpit.eu.auth0.com'
+export AUTH0_CLIENT_SECRET='SIfUpBwjrAUZeftVOjFGUpFys0dP3PyDFfWjYploGaeMZ0u-xndCC8w09NpPgVvu'
+export AUTH0_CALLBACK_URL='http://localhost:5000/callback'
+export AUTH0_AUDIENCE='travel_cockpit'
+export AUTH0_ALGORITHMS='["RS256"]'

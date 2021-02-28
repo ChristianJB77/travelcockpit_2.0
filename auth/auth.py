@@ -8,7 +8,7 @@ from urllib.request import urlopen
 from flask import request, _request_ctx_stack, abort, session
 import json
 import os
-# Constants for Auth0 from constants.py, secret keys stores as config variables
+# Constants for Auth0 from constants.py, stores temporary config variables
 import auth.constants as constants
 
 
@@ -21,13 +21,13 @@ if ENV_FILE:
     load_dotenv(ENV_FILE)
 
 # Auth0 varibales
-AUTH0_CALLBACK_URL = os.environ.get(constants.AUTH0_CALLBACK_URL)
-AUTH0_CLIENT_ID = os.environ.get(constants.AUTH0_CLIENT_ID)
-AUTH0_CLIENT_SECRET = os.environ.get(constants.AUTH0_CLIENT_SECRET)
-AUTH0_DOMAIN = os.environ.get(constants.AUTH0_DOMAIN)
+AUTH0_CALLBACK_URL = os.environ['AUTH0_CALLBACK_URL']
+AUTH0_CLIENT_ID = os.environ['AUTH0_CLIENT_ID']
+AUTH0_CLIENT_SECRET = os.environ['AUTH0_CLIENT_SECRET']
+AUTH0_DOMAIN = os.environ['AUTH0_DOMAIN']
 AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
-AUTH0_AUDIENCE = os.environ.get(constants.AUTH0_AUDIENCE)
-AUTH0_ALGORITHMS = os.environ.get(constants.AUTH0_ALGORITHMS)
+AUTH0_AUDIENCE = os.environ['AUTH0_AUDIENCE']
+AUTH0_ALGORITHMS = os.environ['AUTH0_ALGORITHMS']
 
 
 """AuthError Exception - A standardized way to communicate auth failure modes"""
