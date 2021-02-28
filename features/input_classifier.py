@@ -15,6 +15,10 @@ def check(destination):
         dest = destination.replace("-", " ").lower()
         dest = dest.replace("_", " ")
         dest = dest.replace(",", "")
+        # Remove space at the end
+        if dest[-1] == " ":
+            dest = dest[:-1]
+
         return dest
 
     except (KeyError, TypeError, ValueError):
