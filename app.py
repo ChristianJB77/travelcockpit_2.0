@@ -89,15 +89,9 @@ def create_app(test_config=None):
             loc = None
 
         if res == None:
-            try:
-                user = User(email=session['user_email'], name=userinfo['name'],
-                            location_iso2=loc)
-                db.session.add(user)
-                db.session.commit()
-            except:
-                db.session.rollback()
-            finally:
-                db.session.close()
+            user = User(email=session['user_email'], name=userinfo['name'],
+                        location_iso2=loc)
+            user.insert()
 
         res = User.query.filter(User.email == email).one()
         user_id = res.id
@@ -116,18 +110,20 @@ def create_app(test_config=None):
 
     """APP"""
 
-
+    # View Travel Cockpit's vision / motivation
     @app.route("/vision")
-    def vision():
+    def get_vision():
         return render_template("vision.html")
 
+    # View contact page
     @app.route("/contact")
-    def contact():
+    def get_contact():
         return render_template("contact.html")
 
+    # Get destination search and view result in dashboard view
     @app.route('/home', methods=['GET', 'POST'])
     @requires_auth
-    def home(jwt):
+    def get_post_home(jwt):
         # Get user permission, empty if user not actively got permissions
         session[constants.PERMISSION] = jwt['permissions']
         # Check if user with or without RBAC
@@ -139,6 +135,7 @@ def create_app(test_config=None):
             month_de = Month.query.filter(Month.number == current_month).one()
             month_de_str = month_de.name_de
             go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
+
             return render_template("home.html", go_warm=go_warm)
 
         # POST
@@ -150,6 +147,11 @@ def create_app(test_config=None):
             destination = request.form.get("destination")
             dest = check(destination)
             print('#### DEST: ', dest)
+
+            """Get page request for direct links in blog"""
+            req = request.args.get('dest', None, type=str)
+            print('#### Page request: ', req)
+
             if not dest:
                 return render_template("home.html", number=1,
                                     message="Please provide TRAVEL DESTINATION")
@@ -189,18 +191,11 @@ def create_app(test_config=None):
                 history = loc_classes["location"]
 
             # Store user search in user_history
-            try:
-                user_history = UserHistory(
-                                destination=history,
-                                timestamp=time,
-                                user_id=id)
-                db.session.add(user_history)
-                db.session.commit()
-            except:
-                db.session.rollback()
-            finally:
-                db.session.close()
-
+            user_history = UserHistory(
+                            destination=history,
+                            timestamp=time,
+                            user_id=id)
+            user_history.insert()
 
         return render_template('my_dashboard.html', switch=switch,
                                 loc_classes=loc_classes, links_dic=links_dic,
@@ -208,10 +203,10 @@ def create_app(test_config=None):
                                 covid=covid, holidays=holidays)
 
 
-
+    # View user own history
     @app.route("/history")
     @requires_auth
-    def history(jwt):
+    def get_history(jwt):
         # Show user's search history
         id = session["user_id"]
 
@@ -221,9 +216,41 @@ def create_app(test_config=None):
                     .group_by(UserHistory.destination) \
                     .order_by(func.count(UserHistory.destination).desc()).all()
 
-        print('#### history: ', history)
-
         return render_template("history.html", rows=history)
+
+
+    # Master view of all users, only for Manager and Director RBAC roles
+    @app.route("/history/all")
+    @requires_auth_rbac('get:history-all')
+    def get_history_all(jwt):
+        hist_all = UserHistory.query \
+                    .with_entities(UserHistory.destination, \
+                    func.count(UserHistory.destination)) \
+                    .group_by(UserHistory.destination) \
+                    .order_by(func.count(UserHistory.destination).desc()).all()
+
+        # Get unique user list of listed destinations
+        data = []
+        for hist in hist_all:
+            users = UserHistory.query \
+                    .filter(UserHistory.destination == hist[0]).all()
+
+            names = []
+            for user in users:
+                name = user.users.name
+                if name not in names:
+                    names.append(name)
+
+            data.append({
+                "destination": hist[0],
+                "amount": hist[1],
+                "names": names
+            })
+
+        return render_template("history_all.html", data=data)
+
+
+    """TRAVEL SECRETS BLOG"""
 
 
     """TODOS"""

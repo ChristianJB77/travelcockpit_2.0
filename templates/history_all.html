@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    History
+    All User History
 {% endblock %}
 
 {% block main %}
@@ -11,17 +11,18 @@
             <tr>
                 <th>Destination</th>
                 <th>Number of searches</th>
+                <th>User</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in rows %}
+            {% for d in data %}
                 <tr>
-                    <td>{{ row[0].title() }}</td>
-                    <td>{{ row[1] }}</td>
+                    <td>{{ d.destination.title() }}</td>
+                    <td>{{ d.amount }}</td>
+                    <td>{{ d.names }}</td>
                 </tr>
             {% endfor %}
         </tbody>
-
     </table>
 </div>
 <br><br>

@@ -111,10 +111,13 @@ class WorldBank(db.Model):
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(), nullable=False)
-    name = db.Column(db.String())
-    location_iso2 = db.Column(db.String())
-    user_history = db.relationship('UserHistory', backref='user', lazy=True)
+    email = db.Column(db.String(120), nullable=False)
+    name = db.Column(db.String(80))
+    location_iso2 = db.Column(db.String(2))
+    # Insert new model to database
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
     # Debugging printout formatting
     def __repr__(self):
         return f'<User {self.id} {self.email}>'
@@ -122,13 +125,52 @@ class User(db.Model):
 class UserHistory(db.Model):
     __tablename__ = "user_history"
     id = db.Column(db.Integer, primary_key=True)
-    destination = db.Column(db.String(), nullable=False)
+    destination = db.Column(db.String(120), nullable=False)
     timestamp = db.Column(db.DateTime(), nullable=False)
     # Foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Relationship with users
+    users = db.relationship('User', backref='user_history', lazy=True)
+    # Insert new model to database
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
     # Debugging printout formatting
     def __repr__(self):
-        return f'<UserHistory {self.id} {self.destination}>'
+        return f'<UserHistory {self.id} {self.destination} {self.user_id}>'
+
+
+"""TRAVEL SECRETS BLOG"""
+
+
+class Secret(db.Model):
+    __tablename__ = "secrets"
+    id = db.Column(db.Integer, primary_key=True)
+    # Blog post title
+    title = db.Column(db.String(80), nullable=False)
+    # Top 3 reasons to go
+    why1 = db.Column(db.String(80), nullable=False)
+    why2 = db.Column(db.String(80))
+    why3 = db.Column(db.String(80))
+    # Blog text
+    text = db.Column(db.String(), nullable=False)
+    # Search link to dashboard
+    link = db.Column(db.String())
+    # Insert new model to database
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+    # Delete model in the database
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+    # Update model in the database
+    def update(self):
+        db.session.commit()
+    # Debugging printout formatting
+    def __repr__(self):
+        return f'<Secret {self.id} {self.title}>'
+
 
 
 """TODOS"""
