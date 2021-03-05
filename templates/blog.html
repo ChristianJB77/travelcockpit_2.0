@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Travel Secrets
+{% endblock %}
+
+{% block main %}
+{% for blo in blog %}
+    <tr>
+        <td>{{ blo.title }}</td>
+    </tr>
+{% endfor %}
+<br><br>
+{% endblock %}

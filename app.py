@@ -2,19 +2,19 @@
 import json
 import os
 from flask import Flask, render_template, request, redirect, jsonify, \
-                    abort, url_for, session, _request_ctx_stack
+                    abort, url_for, session, _request_ctx_stack, flash
 from flask_cors import CORS
 from six.moves.urllib.parse import urlencode
 import sys
 import datetime
-from sqlalchemy import func
+from sqlalchemy import func, desc
 
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 # Database model
 from database.models import setup_db, db, Todo_List, Todo, Month, User, \
-                            UserHistory
+                            UserHistory, Secret
 
 # My features
 from features.input_classifier import check, loc_class
@@ -31,6 +31,14 @@ def create_app(test_config=None):
     app.secret_key = os.environ['SECRET_KEY']
     setup_db(app)
     CORS(app)
+    # CORS Headers
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Headers',
+                                'Content-Type,Authorization,true')
+        response.headers.add('Access-Control-Allow-Methods',
+                                'GET,PUT,POST,DELETE,OPTIONS')
+        return response
     #Auth0 initalizing from auth.py
     auth_dict = auther(app)
     auth0 = auth_dict["auth0"]
@@ -82,7 +90,7 @@ def create_app(test_config=None):
 
         ### If user is new, add to users table
         res = User.query.filter(User.email == email).one_or_none()
-        # Location information not available for manual account
+        # Location information not available for manual registered account
         try:
             loc = userinfo['locale']
         except:
@@ -97,7 +105,7 @@ def create_app(test_config=None):
         user_id = res.id
         session[constants.USER_ID] = user_id
 
-        return redirect('/home')
+        return redirect("/home")
 
 
     @app.route('/logout')
@@ -121,13 +129,20 @@ def create_app(test_config=None):
         return render_template("contact.html")
 
     # Get destination search and view result in dashboard view
+    # GET and POST in common endpoint to share premission check
     @app.route('/home', methods=['GET', 'POST'])
     @requires_auth
     def get_post_home(jwt):
         # Get user permission, empty if user not actively got permissions
         session[constants.PERMISSION] = jwt['permissions']
-        # Check if user with or without RBAC
-        print("#### permission @home ", jwt["permissions"])
+        permi = jwt['permissions']
+        # Check if user with or without RBAC -> Render different navi layout
+        # -> Director = delete:master, Manager = delete:own
+        print("#### permission @home ", permi)
+        if 'delete:own' in permi:
+            session[constants.ROLE] = 'Manager'
+        if 'delete:master' in permi:
+            session[constants.ROLE] = 'Director'
 
         if request.method == "GET":
             #Get current month for go warm on
@@ -197,7 +212,7 @@ def create_app(test_config=None):
                             user_id=id)
             user_history.insert()
 
-        return render_template('my_dashboard.html', switch=switch,
+        return render_template("my_dashboard.html", switch=switch,
                                 loc_classes=loc_classes, links_dic=links_dic,
                                 info=info, options=options, weather=weather,
                                 covid=covid, holidays=holidays)
@@ -220,7 +235,7 @@ def create_app(test_config=None):
 
 
     # Master view of all users, only for Manager and Director RBAC roles
-    @app.route("/history/all")
+    @app.route("/history-all")
     @requires_auth_rbac('get:history-all')
     def get_history_all(jwt):
         hist_all = UserHistory.query \
@@ -251,6 +266,40 @@ def create_app(test_config=None):
 
 
     """TRAVEL SECRETS BLOG"""
+
+
+    # View blog posts
+    @app.route("/blog")
+    @requires_auth_rbac('get:blog')
+    def get_blog(jwt):
+        blog = Secret.query.order_by(desc(Secret.id)).all()
+
+        return render_template("blog.html", blog=blog)
+
+    # Create new travel secrets
+    @app.route("/blog/create", methods=['GET'])
+    @requires_auth_rbac('post:blog')
+    def post_blog(jwt):
+        return render_template("blog_create.html")
+
+
+    @app.route("/blog/create", methods=['POST'])
+    @requires_auth_rbac('post:blog')
+    def post_blog_submission(jwt):
+        # Get user form input and insert in database
+        secret = Secret(
+            title = request.form.get('title'),
+            why1 = request.form.get('why1'),
+            why2 = request.form.get('why2'),
+            why3 = request.form.get('why3'),
+            text = request.form.get('text'),
+            link = request.form.get('link')
+        )
+        secret.insert()
+        flash("Blog was successfully added!")
+
+        return redirect("/blog")
+
 
 
     """TODOS"""
