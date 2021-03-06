@@ -6,12 +6,12 @@
 
 {% block main %}
 <h2 class='h2'>Your new Travel Secret</h2>
-<form action="/blog/{{ blog.id }}/edit" method="patch">
+<form id="blog-form" data-id="{{ blog.id }}">
     <div class="form-group">
         <label>Title</label>
 
           <div class="form-group">
-              <input autocomplete="off" autofocus class="form-control"
+              <input id="title" autocomplete="off" autofocus class="form-control"
                 name="title" placeholder="Title" type="text"
                 value="{{ blog.title }}">
           </div>
@@ -21,7 +21,7 @@
           <label>Why? 1st Reason</label>
 
             <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control"
+                <input id="why1" autocomplete="off" autofocus class="form-control"
                   name="why1" placeholder="1. Reason" type="text"
                   value = "{{ blog.why1 }}">
             </div>
@@ -31,11 +31,11 @@
           <label>Text</label>
 
             <div class="form-group">
-                <input autocomplete="off" autofocus class="form-control"
+                <input id="text" autocomplete="off" autofocus class="form-control"
                   name="text" placeholder="Description" type="text"
                   value="{{ blog.text }}">
             </div>
-        
+
     </div>
 
     <div class="form-group">
@@ -43,4 +43,36 @@
     </div>
 </form>
 <br><br>
+
+<script type="text/javascript">
+    // Edit log post (travel secret)
+    const title_input = document.getElementById('title');
+    const why1_input = document.getElementById('why1');
+    const text_input = document.getElementById('text');
+    document.getElementById('blog-form').onsubmit = function(e) {
+        e.preventDefault;
+        console.log('edit blog', e);
+        const blog_id = e.target.dataset['id']
+        const title = title_input.value;
+        const why1 = why1_input.value;
+        const text = text_input.value;
+        fetch('/blog/' + blog_id + '/edit/submission', {
+            method: 'PATCH',
+            body: JSON.stringify({
+                'title': title,
+                'why1': why1,
+                'text': text
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .catch(function() {
+            console.error('Error ocurred')
+        })
+    }
+
+
+</script>
 {% endblock %}

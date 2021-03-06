@@ -11,11 +11,24 @@
 <br>
 <h1 class="h1">Travel Secrets</h1>
 <br>
-<div class="lists-wrapper">
+<div class="blog-wrapper">
     <ul id="secrets">
         {% for blog in blogs %}
         <li>
-            <a>{{ blog.title }} </a>
+            <p class="h2">{{ blog.title }} </p>
+            <p class="text_in_box">{{ blog.why1 }}</p>
+            {% if blog.why2 != None %}
+                <p class="text_in_box">{{ blog.why2 }}</p>
+            {% endif %}
+            {% if blog.why3 != None %}
+                <p class="text_in_box">{{ blog.why3 }}</p>
+            {% endif %}
+            <p class="text_in_box">{{ blog.text }}</p>
+            {% if blog.why3 != None %}
+                <p class="text_in_box">{{ blog.link }}</p>
+            {% endif %}
+            <p class="text_in_box">{{ blog.user_id }}</p>
+            <a class="edit-blog" href="blog/{{ blog.id }}/edit">Edit</a>
             <button class="delete-blog" data-id="{{ blog.id }}">&cross;</button>
         </li>
         {% endfor %}

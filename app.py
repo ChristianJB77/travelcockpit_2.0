@@ -303,30 +303,34 @@ def create_app(test_config=None):
         return redirect("/blog")
 
 
-    # Edit own travel blog post
+    # Edit travel blog post MASTER
     # First get blog then patch
     @app.route("/blog/<int:id>/edit")
-    @requires_auth_rbac('patch:own')
+    @requires_auth_rbac('patch:master')
     def patch_own_blog(jwt, id):
-        blogs = Secret.query.filter(Secret.id == id).one_or_none()
+        blog = Secret.query.filter(Secret.id == id).one_or_none()
         if blog == None:
             abort(404)
 
-        return render_template("blog_edit.html", blogs=blogs)
+        return render_template("blog_edit.html", blog=blog)
 
-    @app.route("/blog/<int:id>/edit", methods=['PATCH'])
-    @requires_auth_rbac('patch:own')
+    @app.route("/blog/<int:id>/edit/submission", methods=['PATCH'])
+    @requires_auth_rbac('patch:master')
     def patch_own_blog_submission(jwt, id):
-        blog = Secret.query.filter(Secret.id == id).one_or_none()
+        # Get HTML json body response
+        body = request.get_json()
+        secret = Secret.query.filter(Secret.id == id).one_or_none()
 
         # Get user edit and update database
-        secret.title = request.form.get('title')
-        secret.why1 = request.form.get('why1')
-        secret.text = request.form.get('text')
+        secret.title = body.get('title', None)
+        secret.why1 = body.get('why1', None)
+        secret.text = body.get('text', None)
 
         secret.update()
 
-        return render_template("/blog")
+        flash("Blog was successfully updated!")
+
+        return jsonify({ 'success': True })
 
     # Delete blog MASTER
     @app.route("/blog/<int:id>/delete", methods=['DELETE'])
@@ -334,7 +338,6 @@ def create_app(test_config=None):
     def delete_blog_master(jwt, id):
         secret = Secret.query.filter(Secret.id == id).one_or_none()
         secret.delete()
-        print('######### DELETED')
 
         return jsonify({ 'success': True })
 

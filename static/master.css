@@ -7,7 +7,7 @@ h1 {
 ul {
   list-style: none;
   padding-left: 0;
-  width: 30vw;
+  width: 50vw;
 }
 li {
   clear: both;
@@ -22,16 +22,10 @@ li button {
   cursor: pointer;
   font-size: 2vh;
 }
-.lists-wrapper {
-  width: 35vw;
-  display: inline-block;
-  vertical-align: top;
-  float: left;
-  padding: 1vh;
-}
-.todos-wrapper {
+.blog-wrapper {
   width: 55vw;
   display: inline-block;
   vertical-align: top;
+  float: left;
   padding: 1vh;
 }
