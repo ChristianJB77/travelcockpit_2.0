@@ -278,14 +278,20 @@ def create_app(test_config=None):
         return render_template("blog_user.html", blogs=blogs, userinfo=userinfo)
 
 
-    # View blog posts MASTER
+    # View blog posts Director & Manager
     @app.route("/blog")
     @requires_auth_rbac('get:blog')
     def get_blog(jwt):
         blogs = Secret.query.order_by(desc(Secret.id)).all()
+        # Userinfo to great by name
         userinfo=session[os.environ['PROFILE_KEY']]
+        # Permission to steer edit & delete link
+        permi = jwt['permissions']
+        # User id to show only relevant edit/delete function to Manager
+        id = session["user_id"]
 
-        return render_template("blog.html", blogs=blogs, userinfo=userinfo)
+        return render_template("blog.html", blogs=blogs, userinfo=userinfo,
+                                permi=permi, id=id)
 
     # Create new travel secrets
     # First get template, then post
@@ -315,11 +321,11 @@ def create_app(test_config=None):
         return redirect("/blog")
 
 
-    # Edit travel blog post MASTER
+    # Edit travel blog post MASTER (Director)
     # First get blog then patch
     @app.route("/blog/<int:id>/edit")
     @requires_auth_rbac('patch:master')
-    def patch_own_blog(jwt, id):
+    def patch_blog(jwt, id):
         blog = Secret.query.filter(Secret.id == id).one_or_none()
         if blog == None:
             abort(404)
@@ -327,7 +333,7 @@ def create_app(test_config=None):
 
     @app.route("/blog/<int:id>/edit/submission", methods=['PATCH'])
     @requires_auth_rbac('patch:master')
-    def patch_own_blog_submission(jwt, id):
+    def patch_blog_submission(jwt, id):
         # Get HTML json body response
         body = request.get_json()
         secret = Secret.query.filter(Secret.id == id).one_or_none()
@@ -346,11 +352,69 @@ def create_app(test_config=None):
 
         return jsonify({ 'success': True })
 
-    # Delete blog MASTER
+
+    # Edit travel blog post OWN (Manager)
+    # First get blog then patch
+    @app.route("/blog/<int:id>/edit-own")
+    @requires_auth_rbac('patch:own')
+    def patch_own_blog(jwt, id):
+        user_id = session["user_id"]
+        blog = Secret.query.filter(Secret.id == id).one_or_none()
+        if blog == None:
+            abort(404)
+        # Double check if blog was created by user
+        if user_id != blog.user_id:
+            abort(403)
+
+        return render_template("blog_edit_own.html", blog=blog)
+
+    @app.route("/blog/<int:id>/edit-own/submission", methods=['PATCH'])
+    @requires_auth_rbac('patch:own')
+    def patch_own_blog_submission(jwt, id):
+        user_id = session["user_id"]
+        # Get HTML json body response
+        body = request.get_json()
+        secret = Secret.query.filter(Secret.id == id).one_or_none()
+
+        # Double check if blog was created by user
+        if user_id != secret.user_id:
+            abort(403)
+
+        # Get user edit and update database
+        secret.title = body.get('title', None)
+        secret.why1 = body.get('why1', None)
+        secret.why2 = body.get('why2', None)
+        secret.why3 = body.get('why3', None)
+        secret.text = body.get('text', None)
+        secret.link = body.get('link', None)
+        # Update database
+        secret.update()
+        flash("Blog was successfully updated!")
+
+        return jsonify({ 'success': True })
+
+
+
+    # Delete blog MASTER (Director)
     @app.route("/blog/<int:id>/delete", methods=['DELETE'])
     @requires_auth_rbac('delete:master')
     def delete_blog_master(jwt, id):
         secret = Secret.query.filter(Secret.id == id).one_or_none()
+        secret.delete()
+        flash("Blog was DELETED!")
+
+        return jsonify({ 'success': True })
+
+    # Delete blog OWN (Manager)
+    @app.route("/blog/<int:id>/delete-own", methods=['DELETE'])
+    @requires_auth_rbac('delete:own')
+    def delete_blog_own(jwt, id):
+        user_id = session["user_id"]
+        secret = Secret.query.filter(Secret.id == id).one_or_none()
+        # Double check if blog was created by user
+        if user_id != secret.user_id:
+            abort(403)
+        # Delete in database
         secret.delete()
         flash("Blog was DELETED!")
 

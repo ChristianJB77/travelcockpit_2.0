@@ -6,7 +6,7 @@
 
 {% block main %}
 <h2 class='h2'>Your new Travel Secret</h2>
-<form id="blog-form" data-id="{{ blog.id }}">
+<form id="blog-form-own" data-id="{{ blog.id }}">
     <div class="form-group">
         <label>Title</label>
           <div class="form-group">
@@ -73,7 +73,7 @@
     const why3_input = document.getElementById('why3');
     const text_input = document.getElementById('text');
     const link_input = document.getElementById('link');
-    document.getElementById('blog-form').onsubmit = function(e) {
+    document.getElementById('blog-form-own').onsubmit = function(e) {
         e.preventDefault;
         console.log('edit blog', e);
         const blog_id = e.target.dataset['id'];
@@ -83,7 +83,7 @@
         const why3 = why3_input.value;
         const text = text_input.value;
         const link = link_input.value;
-        fetch('/blog/' + blog_id + '/edit/submission', {
+        fetch('/blog/' + blog_id + '/edit-own/submission', {
             method: 'PATCH',
             body: JSON.stringify({
                 'title': title,
@@ -106,7 +106,5 @@
             console.error(e);
         })
     }
-
-
 </script>
 {% endblock %}
