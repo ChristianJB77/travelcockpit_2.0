@@ -157,15 +157,15 @@ def create_app(test_config=None):
         else:
             # Get current user_id
             id = session['user_id']
-            #User input check, must be text
-            #Formatting and classification with check function
+            # User input check, must be text
+            # Formatting and classification with check function
+            # Input via user input or blog link button
             destination = request.form.get("destination")
+            req = request.args.get('dest', None, type=str)
+            if destination == None:
+                destination = req
             dest = check(destination)
             print('#### DEST: ', dest)
-
-            """Get page request for direct links in blog"""
-            req = request.args.get('dest', None, type=str)
-            print('#### Page request: ', req)
 
             if not dest:
                 return render_template("home.html", number=1,

@@ -25,8 +25,13 @@
                 <p class="text_in_box">{{ blog.why3 }}</p>
             {% endif %}
             <p class="text_in_box">{{ blog.text }}</p>
-            {% if blog.why3 != None %}
-                <p class="text_in_box">{{ blog.link }}</p>
+            {% if blog.link != None %}
+                <form action="/home?dest={{ blog.link }}" method="post">
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">
+                          {{ blog.link }}</button>
+                    </div>
+                </form>
             {% endif %}
             <p class="text_in_box">{{ blog.user_id }}</p>
             <a class="edit-blog" href="blog/{{ blog.id }}/edit">Edit</a>
