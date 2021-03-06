@@ -288,6 +288,8 @@ def create_app(test_config=None):
     @requires_auth_rbac('post:blog')
     def post_blog_submission(jwt):
         # Get user form input and insert in database
+
+        # Minimum fill level check
         secret = Secret(
             title = request.form.get('title'),
             why1 = request.form.get('why1'),
@@ -311,7 +313,6 @@ def create_app(test_config=None):
         blog = Secret.query.filter(Secret.id == id).one_or_none()
         if blog == None:
             abort(404)
-
         return render_template("blog_edit.html", blog=blog)
 
     @app.route("/blog/<int:id>/edit/submission", methods=['PATCH'])
@@ -324,7 +325,10 @@ def create_app(test_config=None):
         # Get user edit and update database
         secret.title = body.get('title', None)
         secret.why1 = body.get('why1', None)
+        secret.why2 = body.get('why2', None)
+        secret.why3 = body.get('why3', None)
         secret.text = body.get('text', None)
+        secret.link = body.get('link', None)
 
         secret.update()
 
