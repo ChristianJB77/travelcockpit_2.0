@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Travel Secrets
+{% endblock %}
+
+{% block main %}
+<div class="container">
+    <h2>Welcome {{userinfo['name']}}</h2>
+</div>
+<br>
+<h1 class="h1">Travel Secrets</h1>
+<br>
+<div class="blog-wrapper">
+    <ul id="secrets">
+        {% for blog in blogs %}
+        <li>
+            <p class="h2">{{ blog.title }} </p>
+            <p class="text_in_box">{{ blog.why1 }}</p>
+            {% if blog.why2 != None %}
+                <p class="text_in_box">{{ blog.why2 }}</p>
+            {% endif %}
+            {% if blog.why3 != None %}
+                <p class="text_in_box">{{ blog.why3 }}</p>
+            {% endif %}
+            <p class="text_in_box">{{ blog.text }}</p>
+            {% if blog.why3 != None %}
+                <p class="text_in_box">{{ blog.link }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+<br><br>
+{% endblock %}

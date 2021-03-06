@@ -25,7 +25,16 @@
             </div>
         </div>
     </form>
-    <br><br><br><br>
+    <br><br><br>
+    <!-- Travel Secrets Blog -->
+    {% if session.role %}
+        <a class="form-row center_div align-items-center"
+            href="/blog">Travel Secrets</a>
+    {% else %}
+    <a class="form-row center_div align-items-center"
+        href="/blog/user" target="_blank">Travel Secrets</a>
+    {% endif %}
+    <br><br><br>
     <!-- Travel location idea for warm weather this month -->
     <h2 class='h2'>Jetzt ins Warme?</h2>
     <a class="form-row center_div align-items-center"

@@ -10,6 +10,7 @@
 </div>
 <br>
 <h1 class="h1">Travel Secrets</h1>
+<a class="create-blog" href="/blog/create">Create new</a>
 <br>
 <div class="blog-wrapper">
     <ul id="secrets">
@@ -50,6 +51,7 @@
             .then(function() {
                 const item = e.target.parentElement;
                 item.remove();
+                window.location.reload(true);
             })
             .catch(function(e) {
                 console.error(e);
