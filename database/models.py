@@ -156,6 +156,10 @@ class Secret(db.Model):
     text = db.Column(db.String(), nullable=False)
     # Search link to dashboard
     link = db.Column(db.String())
+    # Foreign key
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    # Relationship with users
+    users = db.relationship('User', backref='secrets', lazy=True)
     # Insert new model to database
     def insert(self):
         db.session.add(self)

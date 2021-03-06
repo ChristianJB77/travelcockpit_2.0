@@ -6,21 +6,24 @@
 
 {% block main %}
 <h2 class='h2'>Your new Travel Secret</h2>
-<form action="/blog/create" method="post">
+<form action="/blog/{{ blog.id }}/edit" method="patch">
     <div class="form-group">
         <label>Title</label>
 
           <div class="form-group">
               <input autocomplete="off" autofocus class="form-control"
-                name="title" placeholder="Title" type="text">
+                name="title" placeholder="Title" type="text"
+                value="{{ blog.title }}">
+          </div>
 
-        </div>
     </div>
     <div class="form-group">
           <label>Why? 1st Reason</label>
 
+            <div class="form-group">
                 <input autocomplete="off" autofocus class="form-control"
-                  name="why1" placeholder="1. Reason" type="text">
+                  name="why1" placeholder="1. Reason" type="text"
+                  value = "{{ blog.why1 }}">
             </div>
 
     </div>
@@ -29,13 +32,14 @@
 
             <div class="form-group">
                 <input autocomplete="off" autofocus class="form-control"
-                  name="text" placeholder="Description" type="text">
+                  name="text" placeholder="Description" type="text"
+                  value="{{ blog.text }}">
             </div>
         
     </div>
 
     <div class="form-group">
-      <button class="btn btn-primary" type="submit">POST</button>
+      <button class="btn btn-primary" type="submit">EDIT</button>
     </div>
 </form>
 <br><br>

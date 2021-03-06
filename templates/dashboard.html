@@ -15,9 +15,6 @@
     <body>
         <div class="container">
             <h2>Welcome {{userinfo['name']}}</h2>
-            <pre>{{userinfo}}</pre>
-            <pre>{{userinfo_pretty}}</pre>
-            <a id="qsLogoutBtn" class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
         </div>
         <br>
         <h1>Todos App</h1>
@@ -132,7 +129,7 @@
                     .then(function() {
                         const item = e.target.parentElement;
                         item.remove();
-                            document.getElementById("error_todo").className = "hidden";
+                        document.getElementById("error_todo").className = "hidden";
                     })
                     .catch(function(e) {
                         console.error(e);

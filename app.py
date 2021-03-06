@@ -272,16 +272,17 @@ def create_app(test_config=None):
     @app.route("/blog")
     @requires_auth_rbac('get:blog')
     def get_blog(jwt):
-        blog = Secret.query.order_by(desc(Secret.id)).all()
+        blogs = Secret.query.order_by(desc(Secret.id)).all()
+        userinfo=session[os.environ['PROFILE_KEY']]
 
-        return render_template("blog.html", blog=blog)
+        return render_template("blog.html", blogs=blogs, userinfo=userinfo)
 
     # Create new travel secrets
-    @app.route("/blog/create", methods=['GET'])
+    # First get template, then post
+    @app.route("/blog/create")
     @requires_auth_rbac('post:blog')
     def post_blog(jwt):
         return render_template("blog_create.html")
-
 
     @app.route("/blog/create", methods=['POST'])
     @requires_auth_rbac('post:blog')
@@ -293,13 +294,49 @@ def create_app(test_config=None):
             why2 = request.form.get('why2'),
             why3 = request.form.get('why3'),
             text = request.form.get('text'),
-            link = request.form.get('link')
+            link = request.form.get('link'),
+            user_id = session["user_id"]
         )
         secret.insert()
         flash("Blog was successfully added!")
 
         return redirect("/blog")
 
+
+    # Edit own travel blog post
+    # First get blog then patch
+    @app.route("/blog/<int:id>/edit")
+    @requires_auth_rbac('patch:own')
+    def patch_own_blog(jwt, id):
+        blogs = Secret.query.filter(Secret.id == id).one_or_none()
+        if blog == None:
+            abort(404)
+
+        return render_template("blog_edit.html", blogs=blogs)
+
+    @app.route("/blog/<int:id>/edit", methods=['PATCH'])
+    @requires_auth_rbac('patch:own')
+    def patch_own_blog_submission(jwt, id):
+        blog = Secret.query.filter(Secret.id == id).one_or_none()
+
+        # Get user edit and update database
+        secret.title = request.form.get('title')
+        secret.why1 = request.form.get('why1')
+        secret.text = request.form.get('text')
+
+        secret.update()
+
+        return render_template("/blog")
+
+    # Delete blog MASTER
+    @app.route("/blog/<int:id>/delete", methods=['DELETE'])
+    @requires_auth_rbac('delete:master')
+    def delete_blog_master(jwt, id):
+        secret = Secret.query.filter(Secret.id == id).one_or_none()
+        secret.delete()
+        print('######### DELETED')
+
+        return jsonify({ 'success': True })
 
 
     """TODOS"""
@@ -344,7 +381,7 @@ def create_app(test_config=None):
 
     # Delete task
     @app.route("/todos/<todo_id>/delete", methods=['DELETE'])
-    @requires_auth_rbac('delete:task')
+    @requires_auth_rbac('delete:master')
     def delete_todo(jwt, todo_id):
         try:
             Todo.query.filter_by(id=todo_id).delete()

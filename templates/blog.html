@@ -5,10 +5,43 @@
 {% endblock %}
 
 {% block main %}
-{% for blo in blog %}
-    <tr>
-        <td>{{ blo.title }}</td>
-    </tr>
-{% endfor %}
+<div class="container">
+    <h2>Welcome {{userinfo['name']}}</h2>
+</div>
+<br>
+<h1 class="h1">Travel Secrets</h1>
+<br>
+<div class="lists-wrapper">
+    <ul id="secrets">
+        {% for blog in blogs %}
+        <li>
+            <a>{{ blog.title }} </a>
+            <button class="delete-blog" data-id="{{ blog.id }}">&cross;</button>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 <br><br>
+
+<script type="text/javascript">
+    // Delete function
+    const blog_del_but = document.querySelectorAll('.delete-blog');
+    for (let i=0; i < blog_del_but.length; i++) {
+        const del = blog_del_but[i];
+        del.onclick = function(e) {
+            console.log('blog delete function', e);
+            const blog_id = e.target.dataset['id'];
+            fetch('/blog/' + blog_id + '/delete', {
+                method: 'DELETE'
+            })
+            .then(function() {
+                const item = e.target.parentElement;
+                item.remove();
+            })
+            .catch(function(e) {
+                console.error(e);
+            });
+        }
+    }
+</script>
 {% endblock %}
