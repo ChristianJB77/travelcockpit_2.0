@@ -26,15 +26,21 @@
         </div>
     </form>
     <br><br><br>
+
     <!-- Travel Secrets Blog -->
     {% if session.role %}
-        <a class="form-row center_div align-items-center"
-            href="/blog">Travel Secrets</a>
+    <h2 class="form-row align-items-center center_div h2">Travel Secrets</h2>
+    <a class="form-row align-items-center center_div" href="/blog">
+        <i class="fas fa-globe-europe fa-10x" style="color: white"></i>
+    </a>
     {% else %}
-    <a class="form-row center_div align-items-center"
-        href="/blog/user">Travel Secrets</a>
+    <h2 class="form-row align-items-center center_div h2">Travel Secrets</h2>
+    <a class="form-row align-items-center center_div" href="/blog/user">
+        <i class="fas fa-globe-europe fa-10x" style="color: white"></i>
+    </a>
     {% endif %}
     <br><br><br>
+
     <!-- Travel location idea for warm weather this month -->
     <h2 class='h2'>Jetzt ins Warme?</h2>
     <a class="form-row center_div align-items-center"

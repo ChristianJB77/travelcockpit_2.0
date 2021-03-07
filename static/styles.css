@@ -8,15 +8,23 @@
         background-position: left;
         padding: 1vw;
     }
+    label {
+        color: white;
+        font-size: 2.5vh;
+        text-shadow: 0.06vw 0.06vw black;
+    }
+    .back {
+        color: white;
+        font-size: 2.5vh;
+        text-shadow: 0.06vw 0.06vw black;
+    }
     .alert {
         padding: 1.5vw;
         font-size: 2vh;
     }
-
     .nav {
         border-radius: 0.6vh;
     }
-
     .h1 {
         font-size:4vw;
         padding-left: 0.1vh;
@@ -24,7 +32,6 @@
         text-align: center;
         text-shadow: 0.025vw 0.025vw darkgrey;
     }
-
     .h2 {
         padding-top: 0.2vh;
         font-size:3.5vw;
@@ -32,7 +39,6 @@
         color: white;
         text-shadow: 0.06vw 0.06vw black;
     }
-
     .footer {
         font-size: 2vh;
         padding: 0.6vh;
@@ -40,14 +46,12 @@
         font-weight: bold;
         text-align: left;
     }
-
     .source_footer {
         font-size: 1.5vh;
         padding: 0.6vh
         text-align: center;
         color: white;
     }
-
     .links {
         margin-top: 0.4vh;
         background-color: lightgrey;
@@ -205,19 +209,26 @@
         background-position: left;
         padding: 1vw;
     }
+    label {
+        color: white;
+        font-size: 2.5vh;
+        text-shadow: 0.06vw 0.06vw black;
+    }
+    .back {
+        color: white;
+        font-size: 2.5vh;
+        text-shadow: 0.06vw 0.06vw black;
+    }
     .alert {
         padding: 1vw;
         font-size: 1.5vh;
     }
-
     .nav {
         border-radius: 0.8vh;
     }
-
     .nav_title {
         font-size: 3.5vh;
     }
-
     .h1 {
         font-size:4vh;
         padding-left: 0.2vh;
@@ -233,8 +244,6 @@
         color: white;
         text-shadow: 0.08vw 0.08vw black;
     }
-
-
     .footer {
         font-size: 2vh;
         padding: 0.6vh;
