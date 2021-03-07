@@ -7,7 +7,7 @@ from flask_cors import CORS
 from six.moves.urllib.parse import urlencode
 import sys
 import datetime
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, join
 
 # Constants for Auth0 from constants.py, secret keys stores as config variables
 import auth.constants as constants
@@ -282,9 +282,13 @@ def create_app(test_config=None):
     @app.route("/blog")
     @requires_auth_rbac('get:blog')
     def get_blog(jwt):
-        blogs = Secret.query.order_by(desc(Secret.id)).all()
+        blogs = Secret.query.select_from(join(Secret, User)).order_by(desc(Secret.id)).all()
+
+        user = Secret.query.select_from(join(Secret, User)).all()
+        for u in user:
+            print('#### USER', u.users.name)
         # Userinfo to great by name
-        userinfo=session[os.environ['PROFILE_KEY']]
+        userinfo = session[os.environ['PROFILE_KEY']]
         # Permission to steer edit & delete link
         permi = jwt['permissions']
         # User id to show only relevant edit/delete function to Manager
