@@ -4,15 +4,17 @@
 h1 {
     padding: 1vh;
 }
-ul {
-  list-style: none;
-  padding-left: 0;
-  width: 50vw;
+.delete-blog {
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  color: red;
+  background: none;
+  float: right;
+  cursor: pointer;
+  font-size: 2vh;
 }
-li {
-  clear: both;
-}
-li button {
+.delete-blog-own {
   -webkit-appearance: none;
   border: none;
   outline: none;
