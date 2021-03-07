@@ -93,13 +93,12 @@
     }
     .blog_title {
         font-size:2.5vh;
-        text-shadow: 0.08vw 0.08vw grey;
+        font-weight: bold;
         padding-left: 1vh;
         padding-top: 1vh;
     }
     .blog_p {
         font-size:1.8vh;
-        text-shadow: 0.04vw 0.04vw grey;
         padding-left: 1vh;
     }
     .info_title {
@@ -293,13 +292,12 @@
     }
     .blog_title {
         font-size:2.5vh;
-        text-shadow: 0.08vw 0.08vw grey;
+        font-weight: bold;
         padding-left: 1vh;
         padding-top: 1vh;
     }
     .blog_p {
         font-size:1.8vh;
-        text-shadow: 0.04vw 0.04vw grey;
         padding-left: 1vh;
     }
     .info_box {
