@@ -16,7 +16,7 @@ def check(destination):
         dest = dest.replace("_", " ")
         dest = dest.replace(",", "")
         # Remove space at the end
-        wrong_end = "!§$%&/\()[]{/}=?+*#'-_,;.:<>|@€^°`´"
+        wrong_end = " !§$%&/\()[]{/}=?+*#'-_,;.:<>|@€^°`´"
         if dest[-1] in wrong_end:
             dest = dest[:-1]
 
