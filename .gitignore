@@ -9,6 +9,7 @@ mypython/
 database/travel_cockpit.db
 .env
 setup*
+token.txt
 
 # OS generated files #
 ######################

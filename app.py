@@ -13,9 +13,7 @@ from sqlalchemy import func, desc, join
 import auth.constants as constants
 from auth.auth import AuthError, requires_auth, requires_auth_rbac, auther
 # Database model
-from database.models import setup_db, db, Todo_List, Todo, Month, User, \
-                            UserHistory, Secret
-
+from database.models import setup_db, db, Month, User, UserHistory, Secret
 # My features
 from features.input_classifier import check, loc_class
 from features.link_maker import links
@@ -57,6 +55,8 @@ def create_app(test_config=None):
         current_month = datetime.datetime.now().month
         month_de = Month.query.filter(Month.number == current_month).one()
         month_de_str = month_de.name_de
+        if len(month_de_str) == 0:
+            abort(404)
         go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
         return render_template("index.html", go_warm=go_warm)
 
@@ -149,6 +149,8 @@ def create_app(test_config=None):
             current_month = datetime.datetime.now().month
             month_de = Month.query.filter(Month.number == current_month).one()
             month_de_str = month_de.name_de
+            if len(month_de_str) == 0:
+                abort(404)
             go_warm = "https://www.reise-klima.de/urlaub/" + month_de_str
 
             return render_template("home.html", go_warm=go_warm)
@@ -285,8 +287,6 @@ def create_app(test_config=None):
         blogs = Secret.query.select_from(join(Secret, User)).order_by(desc(Secret.id)).all()
 
         user = Secret.query.select_from(join(Secret, User)).all()
-        for u in user:
-            print('#### USER', u.users.name)
         # Userinfo to great by name
         userinfo = session[os.environ['PROFILE_KEY']]
         # Permission to steer edit & delete link
@@ -307,22 +307,23 @@ def create_app(test_config=None):
     @app.route("/blog/create", methods=['POST'])
     @requires_auth_rbac('post:blog')
     def post_blog_submission(jwt):
-        # Get user form input and insert in database
+        try:
+            # Get user form input and insert in database
+            secret = Secret(
+                title = request.form.get('title'),
+                why1 = request.form.get('why1'),
+                why2 = request.form.get('why2'),
+                why3 = request.form.get('why3'),
+                text = request.form.get('text'),
+                link = request.form.get('link'),
+                user_id = session["user_id"]
+            )
+            secret.insert()
+            flash("Blog was successfully added!")
 
-        # Minimum fill level check
-        secret = Secret(
-            title = request.form.get('title'),
-            why1 = request.form.get('why1'),
-            why2 = request.form.get('why2'),
-            why3 = request.form.get('why3'),
-            text = request.form.get('text'),
-            link = request.form.get('link'),
-            user_id = session["user_id"]
-        )
-        secret.insert()
-        flash("Blog was successfully added!")
-
-        return redirect("/blog")
+            return redirect("/blog")
+        except:
+            abort(405)
 
 
     # Edit travel blog post MASTER (Director)
@@ -338,23 +339,26 @@ def create_app(test_config=None):
     @app.route("/blog/<int:id>/edit/submission", methods=['PATCH'])
     @requires_auth_rbac('patch:master')
     def patch_blog_submission(jwt, id):
-        # Get HTML json body response
-        body = request.get_json()
-        secret = Secret.query.filter(Secret.id == id).one_or_none()
+        try:
+            # Get HTML json body response
+            body = request.get_json()
+            secret = Secret.query.filter(Secret.id == id).one_or_none()
 
-        # Get user edit and update database
-        secret.title = body.get('title', None)
-        secret.why1 = body.get('why1', None)
-        secret.why2 = body.get('why2', None)
-        secret.why3 = body.get('why3', None)
-        secret.text = body.get('text', None)
-        secret.link = body.get('link', None)
+            # Get user edit and update database
+            secret.title = body.get('title', None)
+            secret.why1 = body.get('why1', None)
+            secret.why2 = body.get('why2', None)
+            secret.why3 = body.get('why3', None)
+            secret.text = body.get('text', None)
+            secret.link = body.get('link', None)
 
-        secret.update()
+            secret.update()
 
-        flash("Blog was successfully updated!")
+            flash("Blog was successfully updated!")
 
-        return jsonify({ 'success': True })
+            return jsonify({ 'success': True })
+        except:
+            abort(405)
 
 
     # Edit travel blog post OWN (Manager)
@@ -375,59 +379,71 @@ def create_app(test_config=None):
     @app.route("/blog/<int:id>/edit-own/submission", methods=['PATCH'])
     @requires_auth_rbac('patch:own')
     def patch_own_blog_submission(jwt, id):
-        user_id = session["user_id"]
-        # Get HTML json body response
-        body = request.get_json()
-        secret = Secret.query.filter(Secret.id == id).one_or_none()
+        try:
+            user_id = session["user_id"]
+            # Get HTML json body response
+            body = request.get_json()
+            secret = Secret.query.filter(Secret.id == id).one_or_none()
 
-        # Double check if blog was created by user
-        if user_id != secret.user_id:
-            abort(403)
+            # Double check if blog was created by user
+            if user_id != secret.user_id:
+                abort(403)
 
-        # Get user edit and update database
-        secret.title = body.get('title', None)
-        secret.why1 = body.get('why1', None)
-        secret.why2 = body.get('why2', None)
-        secret.why3 = body.get('why3', None)
-        secret.text = body.get('text', None)
-        secret.link = body.get('link', None)
-        # Update database
-        secret.update()
-        flash("Blog was successfully updated!")
+            # Get user edit and update database
+            secret.title = body.get('title', None)
+            secret.why1 = body.get('why1', None)
+            secret.why2 = body.get('why2', None)
+            secret.why3 = body.get('why3', None)
+            secret.text = body.get('text', None)
+            secret.link = body.get('link', None)
+            # Update database
+            secret.update()
+            flash("Blog was successfully updated!")
 
-        return jsonify({ 'success': True })
-
+            return jsonify({ 'success': True })
+        except:
+            abort(405)
 
 
     # Delete blog MASTER (Director)
     @app.route("/blog/<int:id>/delete", methods=['DELETE'])
     @requires_auth_rbac('delete:master')
     def delete_blog_master(jwt, id):
-        secret = Secret.query.filter(Secret.id == id).one_or_none()
-        secret.delete()
-        flash("Blog was DELETED!")
+        try:
+            secret = Secret.query.filter(Secret.id == id).one_or_none()
+            if secret is None:
+                abort(404)
 
-        return jsonify({ 'success': True })
+            secret.delete()
+            flash("Blog was DELETED!")
+
+            return jsonify({ 'success': True })
+        except:
+            abort(422)
 
     # Delete blog OWN (Manager)
     @app.route("/blog/<int:id>/delete-own", methods=['DELETE'])
     @requires_auth_rbac('delete:own')
     def delete_blog_own(jwt, id):
-        user_id = session["user_id"]
-        secret = Secret.query.filter(Secret.id == id).one_or_none()
-        # Double check if blog was created by user
-        if user_id != secret.user_id:
-            abort(403)
-        # Delete in database
-        secret.delete()
-        flash("Blog was DELETED!")
+        try:
+            user_id = session["user_id"]
+            secret = Secret.query.filter(Secret.id == id).one_or_none()
+            if secret is None:
+                abort(404)
+            # Double check if blog was created by user
+            if user_id != secret.user_id:
+                abort(403)
+            # Delete in database
+            secret.delete()
+            flash("Blog was DELETED!")
 
-        return jsonify({ 'success': True })
-
+            return jsonify({ 'success': True })
+        except:
+            abort(422)
 
     """Error handler"""
 
-    
+
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
@@ -435,6 +451,22 @@ def create_app(test_config=None):
             "error": 400,
             "message": "Bad request"
         }), 400
+
+    @app.errorhandler(401)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 401,
+            "message": "Unauthorized"
+        }), 401
+
+    @app.errorhandler(403)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 403,
+            "message": "Forbidden access"
+        }), 403
 
     @app.errorhandler(404)
     def not_found(error):

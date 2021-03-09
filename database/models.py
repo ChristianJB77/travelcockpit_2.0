@@ -147,13 +147,13 @@ class Secret(db.Model):
     __tablename__ = "secrets"
     id = db.Column(db.Integer, primary_key=True)
     # Blog post title
-    title = db.Column(db.String(80), nullable=False)
+    title = db.Column(db.String(80))
     # Top 3 reasons to go
-    why1 = db.Column(db.String(80), nullable=False)
+    why1 = db.Column(db.String(80))
     why2 = db.Column(db.String(80))
     why3 = db.Column(db.String(80))
     # Blog text
-    text = db.Column(db.String(), nullable=False)
+    text = db.Column(db.String())
     # Search link to dashboard
     link = db.Column(db.String())
     # Foreign key
