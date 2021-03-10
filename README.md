@@ -2,4 +2,4 @@
 
 Restore database for testing
 
- pg_restore -U postgres --dbname=travel_cockpit_test --verbose travel_cockpit_test.sql
+ pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
