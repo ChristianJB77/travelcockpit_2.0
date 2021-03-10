@@ -108,7 +108,6 @@ def weather_widget(loc_classes, switch):
         #Get time zone offset vs. UTC
         loc = r["city"]["coord"]
         hour_offset = get_offset(**loc)
-        print("#### GMT ####", hour_offset)
         #Timedelta
         hour_delta = timedelta(hours=hour_offset)
         #Get today, by converting unix time, as month day integer

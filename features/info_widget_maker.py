@@ -166,7 +166,6 @@ def info_widget(loc_classes, switch, weather):
             info["time_zone"] = gmt
 
 
-        print("############", info)
         return info
 
     except:

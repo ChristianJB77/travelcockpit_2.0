@@ -64,19 +64,48 @@ def auther(app):
     return auth0_dict
 
 
+# Auth Header
+def get_token_auth_header():
+    """Gets access bearer token from authorization header"""
+    # Get authorization form request header
+    auth = request.headers.get('Authorization', None)
+    # Check if authorization header exists
+    if not auth:
+        raise AuthError({
+            'code': 'authorization_header_missing',
+            'description': 'Authorization header is MISSING!'
+        }, abort(401))
+    # If bearer token, then first part of string = 'bearer'
+    parts = auth.split()
+    if parts[0].lower() != 'bearer':
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization header must start with "Bearer"'
+        }, abort(401))
+    # Authorization header string length must be 2
+    elif len(parts) != 2:
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization header must be a BEARER token'
+        }, abort(401))
+
+    token = parts[1]
+    return token
+
+
 # API permission must be in JWT
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
         raise AuthError({
             'code': 'invalid_claims',
             'description': 'Permission NOT included in JWT!'
-        }, 400)
+        }, abort(400))
     # If permission is empty, then no user is not authorized
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Forbidden access (permission NOT found)'
-        }, 403)
+        }, abort(403))
 
 
 def verify_decode_jwt(token):
@@ -90,7 +119,7 @@ def verify_decode_jwt(token):
         raise AuthError({
             'code': 'invalid_header',
             'description': 'Authorization NOT correctly formatted!'
-        }, 401)
+        }, abort(401))
 
     # Get RSA Key
     rsa_key = {}
@@ -119,33 +148,41 @@ def verify_decode_jwt(token):
             raise AuthError({
                 'code': 'token_expired',
                 'description': 'Token expired!'
-            }, 401)
+            }, abort(401))
 
         except jwt.JWTClaimsError:
             raise AuthError({
                 'code': 'invalid_claims',
                 'description': 'Incorrect claims, check the audience & issuer!'
-            }, 401)
+            }, abort(401))
         except Exception:
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Unable to parse authentication token!'
-            }, 400)
+            }, abort(400))
     raise AuthError({
         'code': 'invalid_header',
         'description': 'Unable to find the appropriate key!'
-    }, 400)
+    }, abort(400))
 
 
-"""RBAC splitter"""
+"""RBAC splitter for user w/o role and Manager/Director"""
 
 
 # Authenticate JWT (WITHOUT RBAC permission)
 def requires_auth(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        token = session[constants.ACCESS_TOKEN]
-        payload = verify_decode_jwt(token)
+        # Splitter if token is sent by session constant or HTML header
+        try:
+            token = session[constants.ACCESS_TOKEN]
+        except:
+            token = get_token_auth_header()
+
+        try:
+            payload = verify_decode_jwt(token)
+        except:
+            abort(401)
 
         return f(payload, *args, **kwargs)
     return wrapper
@@ -156,8 +193,16 @@ def requires_auth_rbac(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
-            token = session[constants.ACCESS_TOKEN]
-            payload = verify_decode_jwt(token)
+            # Splitter if token is sent by session constant or HTML header
+            try:
+                token = session[constants.ACCESS_TOKEN]
+            except:
+                token = get_token_auth_header()
+
+            try:
+                payload = verify_decode_jwt(token)
+            except:
+                abort(401)
 
             check_permissions(permission, payload)
 
