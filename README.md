@@ -67,6 +67,23 @@ This will install all of the required packages we selected within the `requireme
 
 - [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
 
+#### Environment variables
+
+All necessary secret keys, AUTH0 variables and JWTs are stored in setup.sh.
+
+```bash
+python;
+```
+
+#### Running the server
+
+From within your work directory first ensure you are working using your created virtual environment and run flask server, which is running on debug mode:
+
+```bash
+python app.py;
+```
+
+
 
 
 
@@ -74,3 +91,6 @@ This will install all of the required packages we selected within the `requireme
 Restore database for testing
 
  pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
+ 
+ 
+ Concept & Copyrights by Christian Johann Bayerle
