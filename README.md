@@ -27,7 +27,7 @@ device focuses the European and especially German traveler. Therefore the dashbo
 search function works in German and English with language specific travel links.
 
 ### Functionality
-Auth0 user authetification, Gunicorn WSGI, Flask API/web server with HTML/CSS frontend, Postgres SQL database and custom Python functions.
+Auth0 user authentication, Gunicorn WSGI, Flask API/web server with HTML/CSS frontend, Postgres SQL database and custom Python functions.
 
 
 ## Frontend
@@ -40,7 +40,7 @@ with Jinja
 
 ## Backend
 
-### Installing Dependencies Local
+### Installing Dependencies
 
 #### Python 3.9.0
 
@@ -131,10 +131,44 @@ Run command in work directory (42 tests)
 ```
 python test_app.py
 ```
-
 All tests are kept in that file and should be maintained as updates are made to app functionality.
 
+
 ## API Reference
+
+### Base URL
+Local: http://localhost:5000/
+Hosted: https://travelcockpit.herokuapp.com/
+
+### Authentication with Auth0
+Set up of Authetication defined in 'Installing Dependencies'
+
+### Errors
+
+App error handler returns HTTP status codes and json objects in following format:
+
+{
+    "success": False,
+    "error": 400,
+    "message": "bad request"
+}
+
+#### Client errors
+- 400: Bad request
+- 401: Unauthorized
+- 403: Forbidden access
+- 404: Resource NOT found
+- 405: Method NOT allowed
+- 422: Unprocessable
+- 500: Internal database error
+
+### Resource endpoint library
+
+
+
+
+
+
 
 
 
@@ -169,6 +203,12 @@ In the browser, go to your Heroku Dashboard and access your application's settin
 ### Push app to deploy 
 ```bash
 git push heroku master
+```
+
+### Run migrations
+Once your app is deployed, run migrations by running: heroku run:
+```bash
+python manage.py db upgrade --app travel_cockpit
 ```
 
 ## Authors
