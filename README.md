@@ -45,6 +45,7 @@ with Jinja
 #### Python 3.9.0
 
 Follow instructions to install the latest version of python for your platform in the [python docs](https://docs.python.org/3/using/unix.html#getting-and-installing-the-latest-version-of-python)
+Buildpack for Heroku deployment is included with file 'runtime.txt'
 
 #### Virtual Enviornment
 
@@ -137,8 +138,38 @@ All tests are kept in that file and should be maintained as updates are made to 
 
 
 
-## Hosting
+## Hosting - Deploying to Heroku
 
+### Create Heroku app
+In order to create the Heroku app run:
+```bash
+heroku create travel_cockpit
+```
+The output will include a git url for your Heroku application (heroku_git_url). Copy this!
+
+Add git remote for Heroku to local repository, using the git url obtained from the last step, in terminal run: 
+```bash
+git remote add heroku heroku_git_url
+```
+
+### Add postgresql add on as app database
+Heroku has an addon for apps for a postgresql database instance. Run this code in order to create the database and connect it to the application: 
+```bash
+heroku addons:create heroku-postgresql:hobby-dev --app travel_cockpit
+```
+Run:
+```bash
+heroku config --app travel_cockpit
+```
+in order to check the configuration variables in Heroku.
+
+### Set configuration variables
+In the browser, go to your Heroku Dashboard and access your application's settings. Reveal your config variables and start adding all the required environment variables for your project, which are stored in setup.sh.
+
+### Push app to deploy 
+```bash
+git push heroku master
+```
 
 ## Authors
 Christian Johann Bayerle
