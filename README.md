@@ -118,23 +118,34 @@ Setup Postgres database:
 dropdb travel_cockpit_test
 createdb travel_cockpit_test
 ```
+The first time you run the tests, omit the dropdb command.
+
 With Postgres running and created database, restore a database using the 'database/210308_travel_cockpit.sql.backup' file provided. From the main work folder in terminal run:
 ```bash
 pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
 ```
 ### Run tests
+
 Run command in work directory (42 tests)
 ```
 python test_app.py
 ```
-The first time you run the tests, omit the dropdb command.
 
 All tests are kept in that file and should be maintained as updates are made to app functionality.
+
+## API Reference
+
+
 
 ## Hosting
 
 
+## Authors
+Christian Johann Bayerle
+Based on the Udacity Nanodegree 'Full Stack Web Development'
 
+## Acknowledgements
+Thanks to Udacity
  
  
- Concept & Copyrights by Christian Johann Bayerle
+Concept & Copyrights by Christian Johann Bayerle
