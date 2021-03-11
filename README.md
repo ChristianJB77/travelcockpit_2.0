@@ -2,6 +2,9 @@
 #### Full Stack Web Developer CAPSTONE PROJECT
 To finally be able to deploy my own web app, I took this Nanondegree. Based on my CS50 final project Flask app 'Travel Cockpit', I have rebuild the entire app to finally deploy it for desktop and mobile usage. As well added a travel suggestion blog functionality to share our personal 'travel secrets'.
 
+## URL
+https://travelcockpit.herokuapp.com/
+
 ## Purpose
 As passionate travelers my wife and me were continuously looking for a central
 Travel Cockpit to get all essential information necessary to plan a trip in one
@@ -37,9 +40,7 @@ with Jinja
 
 ## Backend
 
-### Installing Dependencies (local & hosting)
-
-### Local
+### Installing Dependencies Local
 
 #### Python 3.9.0
 
@@ -59,7 +60,7 @@ pip install -r requirements.txt
 
 This will install all of the required packages we selected within the `requirements.txt` file.
 
-##### Key Dependencies
+#### Key Dependencies
 
 - [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
 
@@ -108,12 +109,20 @@ python app.py
     - Director
         - can perform all actions
 
+## Testing with unittest
+
+### Database setup for testing
+
+With Postgres running and setup database, restore a database using the 'database/210308_travel_cockpit.sql.backup' file provided. From the main work folder in terminal run:
+```bash
+pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
+```
+
+
+## Hosting
 
 
 
-Restore database for testing
-
- pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
  
  
  Concept & Copyrights by Christian Johann Bayerle
