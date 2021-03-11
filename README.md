@@ -27,8 +27,17 @@ search function works in German and English with language specific travel links.
 Auth0 user authetification, Gunicorn WSGI, Flask API/web server with HTML/CSS frontend, Postgres SQL database and custom Python functions.
 
 
+## Frontend
+- HTML pages with Bootstrap powered styling and own customization in CSS
+- Conditional logic for a smart and flexible HTML to adapt on existing content
+with Jinja
+- Icons from Font Awesome
+- Background pictures from private picture collection
 
-## Installing Dependencies (local & hosting)
+
+## Backend
+
+### Installing Dependencies (local & hosting)
 
 ### Local
 
@@ -57,6 +66,9 @@ This will install all of the required packages we selected within the `requireme
 - [SQLAlchemy](https://www.sqlalchemy.org/) and [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/) are libraries to handle the lightweight sqlite database. Since we want you to focus on auth, we handle the heavy lift for you in `./src/database/models.py`. We recommend skimming this code first so you know how to interface with the Drink model.
 
 - [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
+
+
+
 
 
 Restore database for testing
