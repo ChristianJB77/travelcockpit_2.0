@@ -164,7 +164,14 @@ App error handler returns HTTP status codes and json objects in following format
 
 ### Resource endpoint library
 
+#### GET /vision
+- Render html template "vision.html"
 
+#### GET /contact
+- Render html template "contact.html"
+
+#### GET /home
+- Requires authentication w/o RBAC
 
 
 
