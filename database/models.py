@@ -12,6 +12,8 @@ db = SQLAlchemy()
 setup_db(app)
     binds a flask application and a SQLAlchemy service
 '''
+
+
 def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_DATABASE_URI"] = database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -30,8 +32,10 @@ class Month(db.Model):
     name_de = db.Column(db.String(), nullable=False)
     name_en = db.Column(db.String(), nullable=False)
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<Month {self.id} {self.name_de}>'
+
 
 class DataHubCountries(db.Model):
     __tablename__ = "data_hub_countries"
@@ -48,8 +52,10 @@ class DataHubCountries(db.Model):
     continent = db.Column(db.String())
     tld = db.Column(db.String())
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<DataHubCountries {self.id} {self.country_name}>'
+
 
 class CountriesTranslate(db.Model):
     __tablename__ = "countries_translate"
@@ -58,8 +64,10 @@ class CountriesTranslate(db.Model):
     en = db.Column(db.String(), nullable=False)
     de = db.Column(db.String(), nullable=False)
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<CountriesTranslate {self.id} {self.code}>'
+
 
 class Cities(db.Model):
     __tablename__ = "ctities"
@@ -70,6 +78,7 @@ class Cities(db.Model):
     iso2 = db.Column(db.String(), nullable=False)
     state = db.Column(db.String())
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<Cities {self.id} {self.city}>'
 
@@ -79,8 +88,10 @@ class ReiseKlima(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     destination = db.Column(db.String(), nullable=False)
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<ReiseKlima {self.id} {self.destination}>'
+
 
 class CovidCountries(db.Model):
     __tablename__ = "covid_countries"
@@ -89,8 +100,10 @@ class CovidCountries(db.Model):
     slug = db.Column(db.String(), nullable=False)
     iso2 = db.Column(db.String(), nullable=False)
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<CovidCountries {self.id} {self.country}>'
+
 
 class WorldBank(db.Model):
     __tablename__ = "world_bank"
@@ -101,6 +114,7 @@ class WorldBank(db.Model):
     SeriesCode = db.Column(db.String(), nullable=False)
     year2019 = db.Column(db.String(), nullable=False)
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<CovidCountries {self.id} {self.SeriesName}>'
 
@@ -115,12 +129,15 @@ class User(db.Model):
     name = db.Column(db.String(80))
     location_iso2 = db.Column(db.String(2))
     # Insert new model to database
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<User {self.id} {self.email}>'
+
 
 class UserHistory(db.Model):
     __tablename__ = "user_history"
@@ -132,10 +149,12 @@ class UserHistory(db.Model):
     # Relationship with users
     users = db.relationship('User', backref='user_history', lazy=True)
     # Insert new model to database
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<UserHistory {self.id} {self.destination} {self.user_id}>'
 
@@ -161,44 +180,51 @@ class Secret(db.Model):
     # Relationship with users
     users = db.relationship('User', backref='secrets', lazy=True)
     # Insert new model to database
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
     # Delete model in the database
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
     # Update model in the database
+
     def update(self):
         db.session.commit()
     # Debugging printout formatting
+
     def __repr__(self):
         return f'<Secret {self.id} {self.title}>'
-
 
 
 """TODOS"""
 
 
-#Parent table for todos list
+# Parent table for todos list
 class Todo_List(db.Model):
     __tablename__ = "todos_list"
     id = db.Column(db.Integer, primary_key=True)
     list_name = db.Column(db.String(), nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
     todos = db.relationship('Todo', backref='list', lazy=True)
-    #Debugging printout formatting
+    # Debugging printout formatting
+
     def __repr__(self):
         return f'<Todo {self.id} {self.list_name}>'
 
-#Child table for todos -> one to many relationship
+# Child table for todos -> one to many relationship
+
+
 class Todo(db.Model):
     __tablename__ = "todos"
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
     completed = db.Column(db.Boolean, nullable=False, default=False)
     todos_list_id = db.Column(db.Integer, db.ForeignKey('todos_list.id'),
-                    nullable=False)
-    #Debugging printout formatting
+                              nullable=False)
+    # Debugging printout formatting
+
     def __repr__(self):
         return f'<Todo {self.id} {self.decription}>'

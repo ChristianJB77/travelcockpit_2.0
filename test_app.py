@@ -9,6 +9,8 @@ from app import create_app
 from database.models import setup_db, db, Month, User, UserHistory, Secret
 
 # Travel Cockpit endpoints test class
+
+
 class TravelCockpitTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -34,9 +36,7 @@ class TravelCockpitTestCase(unittest.TestCase):
     def tearDown(self):
         pass
 
-
     """Endpoint testing (without login/logout)"""
-
 
     def test_start_page(self):
         res = self.client().get('/')
@@ -74,30 +74,31 @@ class TravelCockpitTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 404)
 
-
     """Requires AUTH0, w/o RBAC -> every user"""
 
-
     def test_get_home(self):
-        res = self.client().get('/home', headers=
-                                    {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/home',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
         self.assertIn('https://www.reise-klima.de/urlaub/', str(data))
 
     def test_401_get_home(self):
-        res = self.client().get('/home', headers=
-                                    {'Authorization':'Bearer '})
+        res = self.client().get('/home', headers={'Authorization': 'Bearer '})
         data = res.data
 
         self.assertEqual(res.status_code, 401)
         self.assertNotIn('https://www.reise-klima.de/urlaub/', str(data))
 
     def test_post_home(self):
-        res = self.client().post('/home', headers=
-                                    {'Authorization':'Bearer '+self.test_user},
-                                    data={"destination": "Spain"})
+        res = self.client().post(
+                        '/home',
+                        headers={'Authorization': 'Bearer '+self.test_user},
+                        data={"destination": "Spain"}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
@@ -105,17 +106,18 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Invalid header
     def test__401_post_home(self):
-        res = self.client().post('/home', headers=
-                                    {'Authorization':'Bearer '},
-                                    data={"destination": "Spain"})
+        res = self.client().post('/home', headers={'Authorization': 'Bearer '},
+                                 data={"destination": "Spain"})
         data = res.data
 
         self.assertEqual(res.status_code, 401)
         self.assertNotIn('spain', str(data))
 
     def test_get_history(self):
-        res = self.client().get('/history', headers=
-                                    {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/history',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
@@ -123,8 +125,10 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Invalid header
     def test_401_get_history(self):
-        res = self.client().get('/history', headers=
-                                    {'Authorization':'Bearer '})
+        res = self.client().get(
+                                '/history',
+                                headers={'Authorization': 'Bearer '}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 401)
@@ -132,8 +136,10 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Manager
     def test_get_history_all(self):
-        res = self.client().get('/history-all', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/history-all',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
@@ -141,8 +147,10 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Director
     def test_get_history_all(self):
-        res = self.client().get('/history-all', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().get(
+                        '/history-all',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
@@ -150,129 +158,150 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Unauthorized
     def test_403_get_history_all(self):
-        res = self.client().get('/history-all', headers=
-                                {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/history-all',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 403)
         self.assertNotIn('Secret', str(data))
-
 
     """CRUD API endpoint testing (Secret Model)"""
 
     # CREATE
     # Before POST, test get form html page
     def test_create_blog(self):
-        res = self.client().get('/blog/create', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/create',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
 
         self.assertEqual(res.status_code, 200)
 
     def test_404_create_blog(self):
-        res = self.client().get('/blog/create/1', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/create/1',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
 
         self.assertEqual(res.status_code, 404)
 
     # Unauthorized
     def test_403_create_blog(self):
-        res = self.client().get('/blog/create', headers=
-                                {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/blog/create',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
 
         self.assertEqual(res.status_code, 403)
 
     def test_create_blog_manager(self):
-        res = self.client().post('/blog/create', headers=
-                                {'Authorization':'Bearer '+self.test_manager},
-                                data={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone",
-                                    "why2": "Superb food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains!",
-                                    "link": "Verona"
-                                })
+        res = self.client().post(
+                        '/blog/create',
+                        headers={'Authorization': 'Bearer '+self.test_manager},
+                        data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
 
         self.assertEqual(res.status_code, 302)
 
     # Unauthorized
     def test_403_create_blog(self):
-        res = self.client().post('/blog/create', headers=
-                                {'Authorization':'Bearer '+self.test_user},
-                                data={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone",
-                                    "why2": "Superb food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains!",
-                                    "link": "Verona"
-                                })
+        res = self.client().post(
+                        '/blog/create',
+                        headers={'Authorization': 'Bearer '+self.test_user},
+                        data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
 
         self.assertEqual(res.status_code, 403)
 
     def test_404_create_blog_manager(self):
-        res = self.client().post('/blog/create/1', headers=
-                                {'Authorization':'Bearer '+self.test_manager},
-                                data={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone",
-                                    "why2": "Superb food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains!",
-                                    "link": "Verona"
-                                })
+        res = self.client().post(
+                        '/blog/create/1',
+                        headers={'Authorization': 'Bearer '+self.test_manager},
+                        data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
 
         self.assertEqual(res.status_code, 404)
 
     def test_create_blog_director(self):
-        res = self.client().post('/blog/create', headers=
-                                {'Authorization':'Bearer '+self.test_director},
-                                data={
-                                    "title": "Parma",
-                                    "why1": "Parmegiano",
-                                    "text": "Cheeeeeeeese",
-                                    "link": "Parma"
-                                })
+        res = self.client().post(
+                    '/blog/create',
+                    headers={'Authorization': 'Bearer '+self.test_director},
+                    data={
+                            "title": "Parma",
+                            "why1": "Parmegiano",
+                            "text": "Cheeeeeeeese",
+                            "link": "Parma"
+                        })
 
         self.assertEqual(res.status_code, 302)
 
     # READ
     # User
     def test_get_blog_user(self):
-        res = self.client().get('/blog/user', headers=
-                                {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                        '/blog/user',
+                        headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
         self.assertIn('Valpolicella', str(data))
 
     def test_401_get_blog_user(self):
-        res = self.client().get('/blog/user', headers=
-                                {'Authorization':'Bearer '})
+        res = self.client().get(
+                                '/blog/user',
+                                headers={'Authorization': 'Bearer '}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 401)
         self.assertNotIn('Valpolicella', str(data))
 
     def test_404_get_blog_user(self):
-        res = self.client().get('/blog/user/1', headers=
-                                {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/blog/user/1',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 404)
         self.assertNotIn('Valpolicella', str(data))
 
     def test_get_blog_manager(self):
-        res = self.client().get('/blog', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
         self.assertIn('Valpolicella', str(data))
 
     def test_get_blog_director(self):
-        res = self.client().get('/blog', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().get(
+                        '/blog',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 200)
@@ -280,16 +309,20 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # Unauthorized
     def test_403_get_blog(self):
-        res = self.client().get('/blog', headers=
-                                {'Authorization':'Bearer '+self.test_user})
+        res = self.client().get(
+                            '/blog',
+                            headers={'Authorization': 'Bearer '+self.test_user}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 403)
         self.assertNotIn('Valpolicella', str(data))
 
     def test_404_get_blog_manager(self):
-        res = self.client().get('/blog/1', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/1',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
 
         self.assertEqual(res.status_code, 404)
@@ -297,156 +330,183 @@ class TravelCockpitTestCase(unittest.TestCase):
 
     # UPDATE
     def test_get_edit_blog_director(self):
-        res = self.client().get('/blog/69/edit', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().get(
+                        '/blog/69/edit',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                )
         data = res.data
         self.assertEqual(res.status_code, 200)
         self.assertIn('Parma', str(data))
 
     def test_404_get_edit_blog_director(self):
-        res = self.client().get('/blog/68/edit', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().get(
+                        '/blog/68/edit',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                )
         data = res.data
         self.assertEqual(res.status_code, 404)
         self.assertNotIn('Parma', str(data))
 
     def test_get_edit_blog_manager(self):
-        res = self.client().get('/blog/70/edit-own', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/70/edit-own',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
         self.assertEqual(res.status_code, 200)
         self.assertIn('Valpolicella', str(data))
 
     def test_404_get_edit_blog_manager(self):
-        res = self.client().get('/blog/68/edit-own', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/68/edit-own',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
         self.assertEqual(res.status_code, 404)
         self.assertNotIn('Valpolicella', str(data))
 
     def test_403_get_edit_blog_manager(self):
-        res = self.client().get('/blog/69/edit-own', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().get(
+                        '/blog/69/edit-own',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                )
         data = res.data
         self.assertEqual(res.status_code, 403)
         self.assertNotIn('Valpolicella', str(data))
 
     def test_patch_edit_blog_director(self):
-        res = self.client().patch('/blog/69/edit/submission', headers=
-                                {'Authorization':'Bearer '+self.test_director},
-                                json={
-                                    "title": "Parma",
-                                    "why1": "Parmegiano",
-                                    "why2": "Emilia Romagnia",
-                                    "text": "Home of the best cheese!",
-                                    "link": "Parma"
-                                })
+        res = self.client().patch(
+                    '/blog/69/edit/submission',
+                    headers={'Authorization': 'Bearer '+self.test_director},
+                    json={
+                            "title": "Parma",
+                            "why1": "Parmegiano",
+                            "why2": "Emilia Romagnia",
+                            "text": "Home of the best cheese!",
+                            "link": "Parma"
+                        })
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_405_patch_edit_blog_director(self):
-        res = self.client().patch('/blog/68/edit/submission', headers=
-                                {'Authorization':'Bearer '+self.test_director},
-                                json={
-                                    "title": "Parma",
-                                    "why1": "Parmegiano",
-                                    "why2": "Emilia Romagnia",
-                                    "text": "Home of the best cheese!",
-                                    "link": "Parma"
-                                })
+        res = self.client().patch(
+                    '/blog/68/edit/submission',
+                    headers={'Authorization': 'Bearer '+self.test_director},
+                    json={
+                            "title": "Parma",
+                            "why1": "Parmegiano",
+                            "why2": "Emilia Romagnia",
+                            "text": "Home of the best cheese!",
+                            "link": "Parma"
+                        })
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
 
     def test_patch_edit_blog_manager(self):
-        res = self.client().patch('/blog/70/edit-own/submission', headers=
-                                {'Authorization':'Bearer '+self.test_manager},
-                                json={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone wine",
-                                    "why2": "Superb low priced food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains :)",
-                                    "link": "Verona"
-                                })
+        res = self.client().patch(
+                        '/blog/70/edit-own/submission',
+                        headers={'Authorization': 'Bearer '+self.test_manager},
+                        json={
+                                "title": "Valpolicella",
+                                "why1": "Amarone wine",
+                                "why2": "Superb low priced food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains :)",
+                                "link": "Verona"
+                            })
         data = json.loads(res.data)
-        
+
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_405_patch_edit_blog_manager(self):
-        res = self.client().patch('/blog/68/edit-own/submission', headers=
-                                {'Authorization':'Bearer '+self.test_manager},
-                                json={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone wine",
-                                    "why2": "Superb low priced food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains :)",
-                                    "link": "Verona"
-                                })
+        res = self.client().patch(
+                        '/blog/68/edit-own/submission',
+                        headers={'Authorization': 'Bearer '+self.test_manager},
+                        json={
+                                "title": "Valpolicella",
+                                "why1": "Amarone wine",
+                                "why2": "Superb low priced food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains :)",
+                                "link": "Verona"
+                            })
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
 
     # Test if Manager can patch Director's post -> Should not be possible
     def test_not_own_patch_edit_blog_manager(self):
-        res = self.client().patch('/blog/69/edit-own/submission', headers=
-                                {'Authorization':'Bearer '+self.test_manager},
-                                json={
-                                    "title": "Valpolicella",
-                                    "why1": "Amarone wine",
-                                    "why2": "Superb low priced food",
-                                    "why3": "Lake Garda",
-                                    "text": "Wine, food, lake & mountains :)",
-                                    "link": "Verona"
-                                })
+        res = self.client().patch(
+                        '/blog/69/edit-own/submission',
+                        headers={'Authorization': 'Bearer '+self.test_manager},
+                        json={
+                                "title": "Valpolicella",
+                                "why1": "Amarone wine",
+                                "why2": "Superb low priced food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains :)",
+                                "link": "Verona"
+                            })
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 405)
         self.assertEqual(data['success'], False)
 
     # DELETE
     def test_delete_blog_director(self):
-        res = self.client().delete('/blog/85/delete', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().delete(
+                        '/blog/85/delete',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_422_delete_blog_director(self):
-        res = self.client().delete('/blog/68/delete', headers=
-                                {'Authorization':'Bearer '+self.test_director})
+        res = self.client().delete(
+                        '/blog/68/delete',
+                        headers={'Authorization': 'Bearer '+self.test_director}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
 
     # Unauthorized
     def test_403_delete_blog_manager(self):
-        res = self.client().delete('/blog/69/delete', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().delete(
+                        '/blog/69/delete',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 403)
         self.assertEqual(data['success'], False)
 
     def test_delete_blog_manager(self):
-        res = self.client().delete('/blog/86/delete-own', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().delete(
+                        '/blog/86/delete-own',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
 
     def test_403_delete_blog_manager(self):
-        res = self.client().delete('/blog/68/delete', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().delete(
+                        '/blog/68/delete',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 403)
         self.assertEqual(data['success'], False)
 
     # Test if Manager can delete Director's blog -> should not be possinle
     def test_not_own_delete_blog_manager(self):
-        res = self.client().delete('/blog/69/delete', headers=
-                                {'Authorization':'Bearer '+self.test_manager})
+        res = self.client().delete(
+                        '/blog/69/delete',
+                        headers={'Authorization': 'Bearer '+self.test_manager}
+                                  )
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 403)
         self.assertEqual(data['success'], False)

@@ -1,7 +1,7 @@
 import os
 import requests
 import urllib.parse
-import locale #Number 1000 comma separator
+import locale  # Number 1000 comma separator
 from sqlalchemy import or_, func
 # Database
 from database.models import db, DataHubCountries, WorldBank
@@ -11,17 +11,17 @@ def fx_rate(iso):
     # FX-rate
     try:
         info_fx = {}
-        #FX-rate API -> Get JSON (https://exchangeratesapi.io/)
+        # FX-rate API -> Get JSON (https://exchangeratesapi.io/)
         res = DataHubCountries.query \
-                    .filter(func.lower(DataHubCountries.iso3166_1_alpha_2) \
+            .filter(func.lower(DataHubCountries.iso3166_1_alpha_2)
                     == iso).one_or_none()
 
         currency = res.iso4217_currency_aplhabetic_code
         cur_name = res.iso4217_currency_name
 
-        #Exchange rate API url
+        # Exchange rate API url
         url = "https://api.exchangeratesapi.io/latest?symbols=USD," + currency
-        #If requested country is using Euro, get only USD
+        # If requested country is using Euro, get only USD
         if currency == "EUR":
             url = "https://api.exchangeratesapi.io/latest?symbols=USD"
 
@@ -33,19 +33,23 @@ def fx_rate(iso):
             info_fx["cur_name"] = "Euro"
         else:
             info_fx["cur_eur"] = round(cur_list["rates"][currency], 2)
-            info_fx["cur_usd"] = round(info_fx["cur_eur"] / cur_list["rates"]["USD"], 2)
+            info_fx["cur_usd"] = round(info_fx["cur_eur"]
+                                       / cur_list["rates"]["USD"], 2)
             info_fx["eur_usd"] = round(cur_list["rates"]["USD"], 2)
             info_fx["cur_name"] = cur_name
-            #Get feeling for local expenses, idea 100 bucks of local currency in EUR
+            # Get feeling for local expenses
+            # idea 100 bucks of local currency in EUR
             feeling = round(100 / cur_list["rates"][currency], 2)
-            #If 100 bucks in local currency are smaller than 10 EUR, then scale up
+            # If 100 bucks in local currency are smaller than 10 EUR
+            # then scale up
             factor = 100
             while feeling < 10:
                 feeling *= 10
                 factor *= 10
 
-            #1000 , splitter for readability
-            locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
+            # 1000 , splitter for readability
+            # Use '' for auto, or force e.g. to 'en_US.UTF-8'
+            locale.setlocale(locale.LC_ALL, '')
             factor_read = f'{factor:n}'
 
             info_fx["feeling_cur"] = round(feeling, 1)
@@ -53,7 +57,7 @@ def fx_rate(iso):
 
         return info_fx
 
-    except:
+    except Exception:
         print("######## ERROR FX-rate #########")
         info_fx = {}
         return info_fx
@@ -82,70 +86,65 @@ def info_widget(loc_classes, switch, weather):
                 info["title_euro"] = "FX box Euro countries"
                 info["title"] = "FX box"
 
-
             """GDP and population"""
-
 
             # World Band database needs iso3 country code
             iso_3 = DataHubCountries.query \
-                    .filter(func.lower(DataHubCountries.iso3166_1_alpha_2) \
-                    == iso).one_or_none().iso316_1_alpha_3
+                .filter(func.lower(DataHubCountries.iso3166_1_alpha_2)
+                        == iso).one_or_none().iso316_1_alpha_3
 
             # Country population in millions
             pop = WorldBank.query.filter(WorldBank.CountryCode == iso_3) \
-                                .filter(WorldBank.SeriesCode == 'SP.POP.TOTL') \
-                                .one_or_none().year2019
+                .filter(WorldBank.SeriesCode == 'SP.POP.TOTL') \
+                .one_or_none().year2019
 
             pop = round(int(pop) / (1000 * 1000), 1)
             info["pop"] = pop
 
             # GDP per capita
             gdp = WorldBank.query.filter(WorldBank.CountryCode == iso_3) \
-                            .filter(WorldBank.SeriesCode == 'NY.GDP.PCAP.CD') \
-                            .one_or_none().year2019
+                .filter(WorldBank.SeriesCode == 'NY.GDP.PCAP.CD') \
+                .one_or_none().year2019
 
             # Convert from USD to EUR
             gdp_raw = 0.0
             gdp_cur = 0
-            #Try/except loop, if fx-rate not available at API
+            # Try/except loop, if fx-rate not available at API
             try:
                 gdp_raw = round(float(gdp) / info["eur_usd"])
                 gdp_cur = "Euro"
 
-            except:
+            except Exception:
                 gdp_raw = round(float(gdp))
                 gdp_cur = "USD"
 
             # 1000 (3 comma digits), splitter for readability
-            locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
+            # Use '' for auto, or force e.g. to 'en_US.UTF-8'
+            locale.setlocale(locale.LC_ALL, '')
             gdp = f'{gdp_raw:n}'
             info["gdp"] = gdp
             info["gdp_cur"] = gdp_cur
 
-
             """Capital, Internet domain, Country phone code"""
-
 
             # Capital
             res = DataHubCountries.query \
-                        .filter(func.lower(DataHubCountries.iso3166_1_alpha_2) \
+                .filter(func.lower(DataHubCountries.iso3166_1_alpha_2)
                         == iso).one_or_none()
 
             info["capital"] = res.capital
             # Internet domain
             info["internet"] = res.tld
             # country phone code
-            info["phone"] = "+" +  res.dial
-
+            info["phone"] = "+" + res.dial
 
             """GMT time zone"""
-
 
             # Get time zone delta from weather dictionary
             time_zone = weather[0]["hour_offset"]
             zone = 0
 
-            #Exception/error errorhandler
+            # Exception/error errorhandler
             if iso == "cn":
                 gmt = "+8"
 
@@ -165,9 +164,8 @@ def info_widget(loc_classes, switch, weather):
 
             info["time_zone"] = gmt
 
-
         return info
 
-    except:
+    except Exception:
         print("######## ERROR #########")
         return None

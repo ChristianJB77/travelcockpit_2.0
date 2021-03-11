@@ -30,7 +30,9 @@ AUTH0_AUDIENCE = os.environ['AUTH0_AUDIENCE']
 AUTH0_ALGORITHMS = os.environ['AUTH0_ALGORITHMS']
 
 
-"""AuthError Exception - A standardized way to communicate auth failure modes"""
+"""
+AuthError Exception - A standardized way to communicate auth failure modes
+"""
 
 
 class AuthError(Exception):
@@ -40,6 +42,7 @@ class AuthError(Exception):
 
 
 """Register and authentificate Auth0"""
+
 
 def auther(app):
 
@@ -56,10 +59,10 @@ def auther(app):
             'scope': 'openid profile email',
         },
     )
-    auth0_dict = {"auth0" : auth0,
-                    "url" : AUTH0_CALLBACK_URL,
-                    "audi" : AUTH0_AUDIENCE,
-                    "id" : AUTH0_CLIENT_ID}
+    auth0_dict = {"auth0": auth0,
+                  "url": AUTH0_CALLBACK_URL,
+                  "audi": AUTH0_AUDIENCE,
+                  "id": AUTH0_CLIENT_ID}
 
     return auth0_dict
 
@@ -176,19 +179,19 @@ def requires_auth(f):
         # Splitter if token is sent by session constant or HTML header
         try:
             token = session[constants.ACCESS_TOKEN]
-        except:
+        except Exception:
             token = get_token_auth_header()
 
         try:
             payload = verify_decode_jwt(token)
-        except:
+        except Exception:
             abort(401)
 
         return f(payload, *args, **kwargs)
     return wrapper
 
 
-#Authenticate JWT WITH RBAC permission
+# Authenticate JWT WITH RBAC permission
 def requires_auth_rbac(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
@@ -196,12 +199,12 @@ def requires_auth_rbac(permission=''):
             # Splitter if token is sent by session constant or HTML header
             try:
                 token = session[constants.ACCESS_TOKEN]
-            except:
+            except Exception:
                 token = get_token_auth_header()
 
             try:
                 payload = verify_decode_jwt(token)
-            except:
+            except Exception:
                 abort(401)
 
             check_permissions(permission, payload)
