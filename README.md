@@ -68,11 +68,12 @@ This will install all of the required packages we selected within the `requireme
 - [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
 
 #### Environment variables
+(Git Bash terminal)
 
-All necessary secret keys, AUTH0 variables and JWTs are stored in setup.sh.
+All necessary secret keys, AUTH0 variables and JWTs are stored in setup.sh. The file is added in the project commit comments and for confidentiality not uploaded to Git Hub.
 
 ```bash
-python;
+source setup.sh
 ```
 
 #### Running the server
@@ -80,7 +81,7 @@ python;
 From within your work directory first ensure you are working using your created virtual environment and run flask server, which is running on debug mode:
 
 ```bash
-python app.py;
+python app.py
 ```
 
 
