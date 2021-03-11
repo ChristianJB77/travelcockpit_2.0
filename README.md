@@ -70,7 +70,7 @@ This will install all of the required packages we selected within the `requireme
 #### Environment variables
 (Git Bash terminal)
 
-All necessary secret keys, AUTH0 variables and JWTs are stored in setup.sh. The file is added in the project commit comments and for confidentiality not uploaded to Git Hub.
+All necessary secret keys, AUTH0 variables and JWT are stored in setup.sh. The file is added in the project commit comments and for confidentiality not uploaded to Git Hub.
 
 ```bash
 source setup.sh
@@ -84,7 +84,29 @@ From within your work directory first ensure you are working using your created 
 python app.py
 ```
 
+#### Setup your own Auth0 3rd party authentification
 
+1. Create a new Auth0 Account
+2. Select a unique tenant domain
+3. Create a new, regular web application
+4. Create a new API
+    - in API Settings:
+        - Enable RBAC
+        - Enable Add Permissions in the Access Token
+5. Create new API permissions (Permission, Description):
+    - `get:history-all`, Read user history of all users
+    - `delete:master`, Delete selected blog post of any Manager
+    - `patch:master`, Edit selected blog of any Manager
+    - `delete:own`, Delete own blog post
+    - `patch:own`, Edit own blog post
+    - `post:blog` Post new blog post
+    - `get:blog`, Read all bog posts
+
+6. Create new roles for:
+    - Manager
+        - can perform all actions, except: `patch:master`, `delte:master`
+    - Director
+        - can perform all actions
 
 
 
