@@ -308,7 +308,7 @@ def links(dest, loc_classes, switch):
         # Good luck mode or city
         else:
             links_dic['booking'] = \
-                + "https://www.booking.com/searchresults.de.html?%&ss=" \
+                "https://www.booking.com/searchresults.de.html?%&ss=" \
                 + des \
                 + "&group_adults=2&group_children=0&no_rooms=1" \
                 + "&order=bayesian_review_score"
@@ -321,7 +321,7 @@ def links(dest, loc_classes, switch):
         # Country
         if loc_classes['loc_type'] == 'country':
             links_dic['booking'] = \
-                + "https://www.booking.com/searchresults.en.html?%&ss=" \
+                "https://www.booking.com/searchresults.en.html?%&ss=" \
                 + co_en \
                 + "&group_adults=2&group_children=0&no_rooms=1" \
                 + "&order=bayesian_review_score"
@@ -332,9 +332,8 @@ def links(dest, loc_classes, switch):
         # Good luck mode or city
         else:
             links_dic['booking'] = \
-                + "https://www.booking.com/searchresults.en.html?%&ss=" \
-                + des \
-                + "&group_adults=2&group_children=0&no_rooms=1" \
+                "https://www.booking.com/searchresults.en.html?%&ss=" \
+                + des + "&group_adults=2&group_children=0&no_rooms=1" \
                 + "&order=bayesian_review_score"
 
             links_dic['airbnb'] = "https://www.airbnb.com/s/" \
