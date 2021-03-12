@@ -1,6 +1,6 @@
 # Travel Cockpit 2.0
 #### Full Stack Web Developer CAPSTONE PROJECT
-To finally be able to deploy my own web app, I took this Nanondegree. Based on my CS50 final project Flask app 'Travel Cockpit', I have rebuild the entire app to finally deploy it for desktop and mobile usage. As well added a travel suggestion blog functionality to share our personal 'travel secrets'.
+To finally be able to deploy my own web app, I took this Nanondegree. Based on my CS50 final project Flask app 'Travel Cockpit', I have rebuild the entire app to finally deploy it for desktop and mobile usage. As well added a travel suggestion blog functionality to share our personal 'travel secrets' (CRUD app).
 
 ## URL
 https://travelcockpit.herokuapp.com/
