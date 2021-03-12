@@ -199,12 +199,94 @@ Pages are directly html rendered with attached data (e.g. render_template("histo
 - Requires authentication with RBAC premission ('get:blog'), e.g. (headers={'Authorization': 'Bearer '+token})
 - Render template "blog.html" with data: blogs, userinfo, permi, id
 
+#### GET /blog/create
+- Requires authentication with RBAC premission ('post:blog'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Render template "blog_create.html" to create form
 
+#### POST /blog/create
+- Requires authentication with RBAC premission ('post:blog'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Get user input data from html form or e.g.:
+                            data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
+ - flash message "Blog was successfully added!"
+ - Redirect to "/blog"
 
+#### GET /blog/<int:id>/edit
+- Requires authentication with RBAC premission ('patch:master'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Director
+- Example path for test database: /blog/69/edit
+- Render template "blog_edit.html" with data: blog (excisitng blog data of selected id)
 
+#### POST /blog/<int:id>/edit
+- Requires authentication with RBAC premission ('patch:master'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Director
+- Example path for test database: /blog/69/edit
+- Get user input data from html form or e.g.:
+                            data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
+- return JSON object: {'success': True}
 
+#### GET /blog/<int:id>/edit-own
+- Requires authentication with RBAC premission ('patch:own'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Manager
+- Example path for test database: /blog/70/edit-own
+- Render template "blog_edit_own.html" with data: blog (excisitng blog data of selected id)
 
+#### POST /blog/<int:id>/edit-own
+- Requires authentication with RBAC premission ('patch:own'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Manager
+- Manager can only update own created blogs with his user_id
+- Example path for test database: /blog/70/edit-own
+- Get user input data from html form or e.g.:
+                            data={
+                                "title": "Valpolicella",
+                                "why1": "Amarone",
+                                "why2": "Superb food",
+                                "why3": "Lake Garda",
+                                "text": "Wine, food, lake & mountains!",
+                                "link": "Verona"
+                            })
+- return JSON object: {'success': True}
 
+#### DELETE /blog/<int:id>/delete
+- Requires authentication with RBAC premission ('delete:master'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Director
+- Delete in frontend by click event
+- Example path for test database: /blog/85/delete
+- return JSON object: {'success': True}
+
+`curl -X DELETE http://localhost:5000/blog/85/delete`
+```
+{
+  "success": true
+}
+```
+
+#### DELETE /blog/<int:id>/delete-own
+- Requires authentication with RBAC premission ('delete:own'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Role: Manager
+- Delete in frontend by click event, only available if blog has been created with his own user_id
+- Example path for test database: /blog/86/delete
+- return JSON object: {'success': True}
+
+`curl -X DELETE http://localhost:5000/blog/86/delete-own`
+```
+{
+  "success": true
+}
+```
 
 
 ## Hosting - Deploying to Heroku
