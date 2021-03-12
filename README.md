@@ -27,7 +27,12 @@ device focuses the European and especially German traveler. Therefore the dashbo
 search function works in German and English with language specific travel links.
 
 ### Functionality
-Auth0 user authentication, Gunicorn WSGI, Flask API/web server with HTML/CSS frontend, Postgres SQL database and custom Python functions.
+- Auth0 user authentication
+- Gunicorn WSGI
+- Flask API/web server
+- HTML/CSS frontend
+- Postgres SQL database
+- Custom Python functions.
 
 
 ## Frontend
