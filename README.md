@@ -42,6 +42,15 @@ with Jinja
 - Icons from Font Awesome
 - Background pictures from private picture collection
 
+## Data input
+
+With thankful acknowledgement for the public free provided data:
+- Weather by openweathermap.org
+- FX-rates by exchangesrateapi
+- Main infos by World Bank
+- COVID19 data by covid19api
+- National holidays by https://date.nager.at/Api/v2/NextPublicHolidays
+
 
 ## Backend
 
