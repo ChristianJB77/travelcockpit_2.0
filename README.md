@@ -162,7 +162,9 @@ App error handler returns HTTP status codes and json objects in following format
 - 422: Unprocessable
 - 500: Internal database error
 
-### Resource endpoint library
+### Resource endpoint library (w/o login/logout endpoints)
+
+Pages are directly html rendered with attached data (e.g. render_template("history.html", rows=history). JSON objects are only returned where necessary (patch, delete). Returning JSON objects would make a diffrent frontend necessary, or would need a if/else condition to split between a pure JSON API requests or html frontend rendering.
 
 #### GET /vision
 - Render html template "vision.html"
@@ -171,7 +173,33 @@ App error handler returns HTTP status codes and json objects in following format
 - Render html template "contact.html"
 
 #### GET /home
-- Requires authentication w/o RBAC
+- Requires authentication (RBAC not required)
+- Render html template "home.html" with data: go_warm (link address)
+
+#### POST /home
+- Requires authentication (RBAC not required), e.g. (headers={'Authorization': 'Bearer '+token})
+- Requests "destination" from html form, e.g. (data={"destination: "Spain"})
+- Render template "my_dashboard.html" with data: switch, loc_classes, links_dic, info, options, covid, holidays
+
+#### GET /history
+- Requires authentication (RBAC not required), e.g. (headers={'Authorization': 'Bearer '+token})
+- Render template "history.html" with data: rows (search history)
+
+#### GET /history-all
+- Requires authentication with RBAC premission ('get:history-all'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Render template "history_all.html" with data: data (search history of all users)
+
+### Resource endpoint library - CRUD app
+
+#### GET /blog/user
+- Requires authentication (RBAC not required), e.g. (headers={'Authorization': 'Bearer '+token})
+- Render template "blog_user.html" with data: blogs, userinfo
+
+#### GET /blog
+- Requires authentication with RBAC premission ('get:blog'), e.g. (headers={'Authorization': 'Bearer '+token})
+- Render template "blog.html" with data: blogs, userinfo, permi, id
+
+
 
 
 
