@@ -63,11 +63,11 @@ Buildpack for Heroku deployment is included with file 'runtime.txt'
 
 #### Virtual Enviornment
 
-We recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organaized. Instructions for setting up a virual enviornment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+I recommend working within a virtual environment whenever using Python for projects. This keeps your dependencies for each project separate and organaized. Instructions for setting up a virual enviornment for your platform can be found in the [python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
 
 #### PIP Dependencies
 
-Once you have your virtual environment setup and running, install dependencies by naviging to the `/backend` directory and running:
+Once you have your virtual environment setup and running, install dependencies by naviging to the work directory and running:
 
 ```bash
 pip install -r requirements.txt
@@ -78,10 +78,7 @@ This will install all of the required packages we selected within the `requireme
 #### Key Dependencies
 
 - [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
-
-- [SQLAlchemy](https://www.sqlalchemy.org/) and [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/) are libraries to handle the lightweight sqlite database. Since we want you to focus on auth, we handle the heavy lift for you in `./src/database/models.py`. We recommend skimming this code first so you know how to interface with the Drink model.
-
-- [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
+- [SQLAlchemy](https://www.sqlalchemy.org/) and [Flask-SQLAlchemy](https://flask-sqlalchemy.palletsprojects.com/en/2.x/) are libraries to handle the Postgres database.
 
 #### Environment variables
 (Git Bash terminal)
@@ -120,7 +117,7 @@ python app.py
 
 6. Create new roles for:
     - Manager
-        - can perform all actions, except: `patch:master`, `delte:master`
+        - can perform all actions, except: `patch:master`, `delete:master`
     - Director
         - can perform all actions
 
@@ -128,14 +125,24 @@ python app.py
 
 ### Database setup for testing
 
-Setup Postgres database:
+#### Setup Postgres database:
 ```
 dropdb travel_cockpit_test
 createdb travel_cockpit_test
 ```
+Windows (Git Bash terminal):
+Login to Postgres first
+```
+psql -U postgres
+```
+Create new database
+```
+drop database travel_cockpit_test
+create database travel_cockpit_test
+```
 The first time you run the tests, omit the dropdb command.
 
-With Postgres running and created database, restore a database using the 'database/210308_travel_cockpit.sql.backup' file provided. From the main work folder in terminal run:
+With Postgres running and created test database, restore a database using the 'database/210308_travel_cockpit.sql.backup' file provided. From the main work folder in terminal run:
 ```bash
 pg_restore -U postgres --dbname=travel_cockpit_test --verbose database/travel_cockpit_test.sql
 ```
@@ -155,7 +162,7 @@ Local: http://localhost:5000/
 Hosted: https://travelcockpit.herokuapp.com/
 
 ### Authentication with Auth0
-Set up of Authetication defined in 'Installing Dependencies'
+Set up of Authetication defined in chapter 'Installing Dependencies'
 
 ### Errors
 
@@ -178,7 +185,7 @@ App error handler returns HTTP status codes and json objects in following format
 
 ### Resource endpoint library (w/o login/logout endpoints)
 
-Pages are directly html rendered with attached data (e.g. render_template("history.html", rows=history). JSON objects are only returned where necessary (patch, delete). Returning JSON objects would make a diffrent frontend necessary, or would need a if/else condition to split between a pure JSON API requests or html frontend rendering.
+Pages are directly html rendered with attached data (e.g. render_template("history.html", rows=history). JSON objects are only returned where necessary or efficient in combination with frontend (patch, delete). Returning JSON objects would make a diffrent frontend necessary, or would need a if/else condition to split between a pure JSON API requests or html frontend rendering, only to enable an API function without frontend.
 
 #### GET /vision
 - Render html template "vision.html"
@@ -292,7 +299,7 @@ Pages are directly html rendered with attached data (e.g. render_template("histo
 - Requires authentication with RBAC premission ('delete:own'), e.g. (headers={'Authorization': 'Bearer '+token})
 - Role: Manager
 - Delete in frontend by click event, only available if blog has been created with his own user_id
-- Example path for test database: /blog/86/delete
+- Example path for test database: /blog/86/delete-own
 - return JSON object: {'success': True}
 
 `curl -X DELETE http://localhost:5000/blog/86/delete-own`
@@ -329,7 +336,7 @@ heroku config --app travel_cockpit
 in order to check the configuration variables in Heroku.
 
 ### Set configuration variables
-In the browser, go to your Heroku Dashboard and access your application's settings. Reveal your config variables and start adding all the required environment variables for your project, which are stored in setup.sh.
+In the browser, go to your Heroku Dashboard and access your application's settings. Reveal your config variables and start adding all the required environment variables for your project, which are stored in setup.sh
 
 ### Push app to deploy 
 ```bash
