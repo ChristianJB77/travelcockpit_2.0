@@ -156,11 +156,82 @@
             <br>
         </div>
 
+
+        <div class="col-sm-4">
+            <div class="container-fluid info_box">
+                <div class="container">
+                    <i class="button_icon fas fa-atlas fa-2x"></i>
+                    <a href="{{ links_dic['lp'] }}" type="button" class="btn btn-primary"
+                        target="_blank">Lonely Planet</a>
+                    <br>
+                    <i class="button_icon fas fa-utensils fa-2x"></i>
+                    <a href="{{ links_dic['michelin'] }}" type="button" class="btn btn-primary"
+                        target="_blank">Michelin Guide</a>
+                </div>
+            </div>
+            <br>
+            {% if weather %}
+            <!-- Weather Widget -->
+            <div class="container-fluid weather_box">
+                <div class="row row-cols-3">
+                    <div class="col"><br><p class="weather_title">{{ weather[0]["feels_like"] }}°C</p><p style="text-align: center">{{ weather[0]["feels_title"] }}</p></div>
+                    <div class="col"><br><img class="weather_icon"
+                        src="http://openweathermap.org/img/w/{{ weather[0]['icon'] }}.png"
+                        alt="weather_icon"><p>{{ weather[0]["description"] }}</p></div>
+                    <div class="col"><br><p>{{ weather[0]["sunrise_title"] }}: {{ weather[0]["sunrise"] }}</p>
+                                        <p>{{ weather[0]["sunset_title"] }}: {{ weather[0]["sunset"] }}</p></div>
+                </div>
+                <br>
+
+                <div class="row row-cols-4">
+                    <div class="col"><p class="weather_subtitle">{{ weather[0]["day"] }}</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[0]["temp"] }}°C</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[0]["humidity"] }}%</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[0]["wind"] }} m/s</p></div>
+                </div>
+                {% for i in range(1, 3) %}
+                <div class="row row-cols-4">
+                    <div class="col"><p class="weather_subtitle">{{ weather[i]["day"] }}</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[i]["temp_max"] }} - {{ weather[i]["temp_min"] }}°C</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[i]["humi_max"] }} - {{ weather[i]["humi_min"] }}%</p></div>
+                    <div class="col"><p class="weather_p">{{ weather[i]["wind_max"] }} - {{ weather[i]["wind_min"] }} m/s</p></div>
+                </div>
+                {% endfor %}
+            </div>
+            <br>
+            {% endif %}
+
+            <div class="container-fluid info_box">
+                <div class="container">
+                    <!-- Climate -->
+                    <i class="button_icon fas fa-cloud-sun-rain fa-2x"></i>
+                    {% if links_dic['reise_klima'] %}
+                        <a href="{{ links_dic['reise_klima'] }}" type="button"
+                            class="btn btn-primary" target="_blank">Klima</a>
+                    {% endif %}
+                    {% if links_dic['reisezeit'] %}
+                        <a href="{{ links_dic['reisezeit'] }}" type="button"
+                            class="btn btn-primary" target="_blank">Klima</a>
+                    {% endif %}
+                    {% if links_dic['climate'] %}
+                        <a href="{{ links_dic['climate'] }}" type="button"
+                            class="btn btn-primary" target="_blank">Climate</a>
+                    {% endif %}
+                    {% if links_dic['google_clima'] %}
+                        <a href="{{ links_dic['google_clima'] }}" type="button"
+                            class="btn btn-primary" target="_blank">Google Climate</a>
+                    {% endif %}
+                </div>
+            </div>
+            <br>
+        </div>
+
+
         <!-- Covid19 Graph Widget -->
         <div class="col-sm-5">
             {% if covid %}
             <div class="covid">
-              <canvas id="covid_chart" width="18vw" height="14vh"></canvas>
+              <canvas id="covid_chart" width="12vw" height="9vh"></canvas>
 
               <script>
                   var ctx = document.getElementById("covid_chart").getContext("2d");
@@ -269,76 +340,6 @@
                         <i class="button_icon fas fa-notes-medical fa-2x"></i>
                         <a href="{{ links_dic['medi_en'] }}" type="button"
                             class="btn btn-primary" target="_blank">Health Care</a>
-                    {% endif %}
-                </div>
-            </div>
-            <br>
-        </div>
-
-
-        <div class="col-sm-4">
-            <div class="container-fluid info_box">
-                <div class="container">
-                    <i class="button_icon fas fa-atlas fa-2x"></i>
-                    <a href="{{ links_dic['lp'] }}" type="button" class="btn btn-primary"
-                        target="_blank">Lonely Planet</a>
-                    <br>
-                    <i class="button_icon fas fa-utensils fa-2x"></i>
-                    <a href="{{ links_dic['michelin'] }}" type="button" class="btn btn-primary"
-                        target="_blank">Michelin Guide</a>
-                </div>
-            </div>
-            <br>
-            {% if weather %}
-            <!-- Weather Widget -->
-            <div class="container-fluid weather_box">
-                <div class="row row-cols-3">
-                    <div class="col"><br><p class="weather_title">{{ weather[0]["feels_like"] }}°C</p><p style="text-align: center">{{ weather[0]["feels_title"] }}</p></div>
-                    <div class="col"><br><img class="weather_icon"
-                        src="http://openweathermap.org/img/w/{{ weather[0]['icon'] }}.png"
-                        alt="weather_icon"><p>{{ weather[0]["description"] }}</p></div>
-                    <div class="col"><br><p>{{ weather[0]["sunrise_title"] }}: {{ weather[0]["sunrise"] }}</p>
-                                        <p>{{ weather[0]["sunset_title"] }}: {{ weather[0]["sunset"] }}</p></div>
-                </div>
-                <br>
-
-                <div class="row row-cols-4">
-                    <div class="col"><p class="weather_subtitle">{{ weather[0]["day"] }}</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[0]["temp"] }}°C</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[0]["humidity"] }}%</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[0]["wind"] }} m/s</p></div>
-                </div>
-                {% for i in range(1, 3) %}
-                <div class="row row-cols-4">
-                    <div class="col"><p class="weather_subtitle">{{ weather[i]["day"] }}</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[i]["temp_max"] }} - {{ weather[i]["temp_min"] }}°C</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[i]["humi_max"] }} - {{ weather[i]["humi_min"] }}%</p></div>
-                    <div class="col"><p class="weather_p">{{ weather[i]["wind_max"] }} - {{ weather[i]["wind_min"] }} m/s</p></div>
-                </div>
-                {% endfor %}
-            </div>
-            <br>
-            {% endif %}
-
-            <div class="container-fluid info_box">
-                <div class="container">
-                    <!-- Climate -->
-                    <i class="button_icon fas fa-cloud-sun-rain fa-2x"></i>
-                    {% if links_dic['reise_klima'] %}
-                        <a href="{{ links_dic['reise_klima'] }}" type="button"
-                            class="btn btn-primary" target="_blank">Klima</a>
-                    {% endif %}
-                    {% if links_dic['reisezeit'] %}
-                        <a href="{{ links_dic['reisezeit'] }}" type="button"
-                            class="btn btn-primary" target="_blank">Klima</a>
-                    {% endif %}
-                    {% if links_dic['climate'] %}
-                        <a href="{{ links_dic['climate'] }}" type="button"
-                            class="btn btn-primary" target="_blank">Climate</a>
-                    {% endif %}
-                    {% if links_dic['google_clima'] %}
-                        <a href="{{ links_dic['google_clima'] }}" type="button"
-                            class="btn btn-primary" target="_blank">Google Climate</a>
                     {% endif %}
                 </div>
             </div>
