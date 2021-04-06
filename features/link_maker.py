@@ -201,7 +201,7 @@ def links(dest, loc_classes, switch):
             links_dic['google_clima'] = \
                 "https://www.google.com/search?q=climate+" + dest
 
-    """Medicine"""
+    """Medicine / Health care"""
 
     # German
     if switch == "German" or loc_classes['language'] == 'german':

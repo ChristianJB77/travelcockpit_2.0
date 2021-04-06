@@ -6,6 +6,8 @@ from sqlalchemy import or_, func
 # Database
 from database.models import db, DataHubCountries, WorldBank
 
+# FX rate API key
+FX_KEY = os.environ['FX_KEY']
 
 def fx_rate(iso):
     # FX-rate
@@ -20,10 +22,12 @@ def fx_rate(iso):
         cur_name = res.iso4217_currency_name
 
         # Exchange rate API url
-        url = "https://api.exchangeratesapi.io/latest?symbols=USD," + currency
+        url = "http://api.exchangeratesapi.io/latest?symbols=USD," + currency \
+                + "&access_key=" + FX_KEY
         # If requested country is using Euro, get only USD
         if currency == "EUR":
-            url = "https://api.exchangeratesapi.io/latest?symbols=USD"
+            url = "http://api.exchangeratesapi.io/latest?symbols=USD" \
+                   + "&access_key=" + FX_KEY
 
         cur_list = requests.get(url).json()
 
@@ -31,6 +35,7 @@ def fx_rate(iso):
             info_fx["eur_usd"] = round(cur_list["rates"]["USD"], 2)
             info_fx["100_usd"] = round(100 / cur_list["rates"]["USD"], 2)
             info_fx["cur_name"] = "Euro"
+
         else:
             info_fx["cur_eur"] = round(cur_list["rates"][currency], 2)
             info_fx["cur_usd"] = round(info_fx["cur_eur"]
