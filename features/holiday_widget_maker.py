@@ -57,5 +57,5 @@ def holiday(loc_classes, switch):
             return holidays, hd_dic
 
     except Exception:
-        print("######## ERROR #########")
+        print("######## ERROR HOLIDAYS #########")
         return None

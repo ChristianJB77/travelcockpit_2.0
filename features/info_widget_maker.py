@@ -120,8 +120,13 @@ def info_widget(loc_classes, switch, weather):
                 gdp_cur = "Euro"
 
             except Exception:
-                gdp_raw = round(float(gdp))
-                gdp_cur = "USD"
+                if gdp == '..':
+                    gdp = None
+                    gdp_cur = None
+
+                else:
+                    gdp_raw = round(float(gdp))
+                    gdp_cur = "USD"
 
             # 1000 (3 comma digits), splitter for readability
             # Use '' for auto, or force e.g. to 'en_US.UTF-8'
@@ -144,33 +149,27 @@ def info_widget(loc_classes, switch, weather):
             info["phone"] = "+" + res.dial
 
             """GMT time zone"""
-
             # Get time zone delta from weather dictionary
             time_zone = weather[0]["hour_offset"]
             zone = 0
 
-            # Exception/error errorhandler
-            if iso == "cn":
-                gmt = "+8"
-
-            else:
-                if (int(time_zone) - time_zone) == 0:
-                    zone = round(time_zone)
-                    if zone > 0:
-                        gmt = "+" + str(zone)
-                    else:
-                        gmt = str(zone)
+            if (int(time_zone) - time_zone) == 0:
+                zone = round(time_zone)
+                if zone > 0:
+                    gmt = "+" + str(zone)
                 else:
-                    zone = time_zone
-                    if zone > 0:
-                        gmt = "+" + str(zone)
-                    else:
-                        gmt = str(zone)
+                    gmt = str(zone)
+            else:
+                zone = time_zone
+                if zone > 0:
+                    gmt = "+" + str(zone)
+                else:
+                    gmt = str(zone)
 
             info["time_zone"] = gmt
 
-        return info
+            return info
 
     except Exception:
-        print("######## ERROR #########")
+        print("######## ERROR INFO #########")
         return None
