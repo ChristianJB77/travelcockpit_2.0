@@ -6,7 +6,7 @@ from pytz import timezone, utc
 from timezonefinder import TimezoneFinder
 from sqlalchemy import or_, func
 # Database
-from database.models import db
+from database.models import db, DataHubCountries
 
 # Time zone finder
 
@@ -44,17 +44,15 @@ def weather_widget(loc_classes, switch):
     sunrise_title = ""
     sunset_title = ""
 
-    # country variable with exception handler
+    # Country variable with exception handler to get CAPITAL
     if loc_classes['loc_type'] == 'country':
-        country = loc_classes['country_en']
 
-        # Exception countries
-        if loc_classes["country_iso"] == "kr":
-            country = "republic of korea"
-        if loc_classes["country_iso"] == "kp":
-            country = "democratic people's republic of korea"
-        if loc_classes["country_iso"] == "za":
-            country = "republic of south africa"
+        iso = loc_classes["country_iso"]
+        res = DataHubCountries.query \
+            .filter(func.lower(DataHubCountries.iso3166_1_alpha_2)
+                    == iso).one_or_none()
+
+        capital = res.capital
 
     try:
         # German lang=de
@@ -67,7 +65,9 @@ def weather_widget(loc_classes, switch):
             # Country q=country_en
             if loc_classes['loc_type'] == 'country':
                 lang = "de"
-                r = requests.get(url_country.format(country, cnt, lang)).json()
+                # Get capital for time time_zone
+                city = capital
+                r = requests.get(url_city.format(city, iso, cnt, lang)).json()
             # Big city q=city,country_iso
             elif loc_classes['loc_type'] == 'big_city':
                 city = loc_classes['city']
@@ -89,7 +89,9 @@ def weather_widget(loc_classes, switch):
             # Country q=country_en
             if loc_classes['loc_type'] == 'country':
                 lang = "en"
-                r = requests.get(url_country.format(country, cnt, lang)).json()
+                # Get capital for time time_zone
+                city = capital
+                r = requests.get(url_city.format(city, iso, cnt, lang)).json()
             # Big city q=city,country_iso
             elif loc_classes['loc_type'] == 'big_city':
                 city = loc_classes['city']
