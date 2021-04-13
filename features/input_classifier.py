@@ -176,6 +176,33 @@ def loc_class(dest):
         dest_dic['print'] = dest_dic['city'].title()
         return dest_dic
 
+    # Search, if user input is misspelled
+    elif DataHubCountries.query \
+        .filter(DataHubCountries.country_name.ilike('%{}%'.format(dest))) \
+        .first() is not None:
+
+        # Location type for link functions
+        dest_dic['loc_type'] = "country"
+        # Get ISO alpha2 code
+        country_iso = DataHubCountries.query \
+            .filter(DataHubCountries.country_name.ilike('%{}%'.format(dest))) \
+            .first().iso3166_1_alpha_2.lower()
+
+        dest_dic['country_iso'] = country_iso
+        # Translate to German and English
+        dest_dic['country_de'] = CountriesTranslate.query \
+            .filter(func.lower(CountriesTranslate.code)
+                    == country_iso).first().de.lower()
+        dest_dic['country_en'] = CountriesTranslate.query \
+            .filter(func.lower(CountriesTranslate.code)
+                    == country_iso).first().en.lower()
+
+        # Language tag
+        dest_dic['language'] = "english"
+        # Print out for html title
+        dest_dic['print'] = dest_dic['country_en'].title()
+        return dest_dic
+
     # Good luck, country and city unknown
     else:
         dest_dic['loc_type'] = "good_luck"

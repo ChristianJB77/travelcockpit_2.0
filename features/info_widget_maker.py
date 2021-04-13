@@ -24,6 +24,7 @@ def fx_rate(iso):
         # Exchange rate API url
         url = "http://api.exchangeratesapi.io/latest?symbols=USD," + currency \
                 + "&access_key=" + FX_KEY
+
         # If requested country is using Euro, get only USD
         if currency == "EUR":
             url = "http://api.exchangeratesapi.io/latest?symbols=USD" \
@@ -44,7 +45,7 @@ def fx_rate(iso):
             info_fx["cur_name"] = cur_name
             # Get feeling for local expenses
             # idea 100 bucks of local currency in EUR
-            feeling = round(100 / cur_list["rates"][currency], 2)
+            feeling = 100 / cur_list["rates"][currency]
             # If 100 bucks in local currency are smaller than 10 EUR
             # then scale up
             factor = 100
@@ -52,6 +53,7 @@ def fx_rate(iso):
                 feeling *= 10
                 factor *= 10
 
+            feeling = round(feeling, 2)
             # 1000 , splitter for readability
             # Use '' for auto, or force e.g. to 'en_US.UTF-8'
             locale.setlocale(locale.LC_ALL, '')
@@ -75,10 +77,8 @@ def info_widget(loc_classes, switch, weather):
         if loc_classes["country_iso"]:
             info = {}
             iso = loc_classes["country_iso"]
-
             # FX-rate function
             info = fx_rate(iso)
-
             # Language differing titles/phrases
             # German
             if switch == "German" or loc_classes['language'] == 'german':

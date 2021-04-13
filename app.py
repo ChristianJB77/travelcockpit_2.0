@@ -192,8 +192,10 @@ def create_app(test_config=None):
             covid = covid_widget(loc_classes, switch)
             # Info box widget
             info = info_widget(loc_classes, switch, weather)
+            print('info', info)
             # National holidays widget
             holidays = holiday(loc_classes, switch)
+            print('holidays', holidays)
             # Current time
             time = datetime.datetime.now()
 
